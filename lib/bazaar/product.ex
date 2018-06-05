@@ -24,7 +24,22 @@ defmodule Bazaar.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [
+      :name,
+      :description,
+      :slug,
+      :status,
+      :sku,
+      :price,
+      :sale_price,
+      :stock_qty,
+      :location,
+      :featured,
+      :listed
+    ])
+    |> validate_required([:name, :description, :slug, :sku, :price, :featured])
+    |> unique_constraint(:name)
+    |> unique_constraint(:slug)
+    |> unique_constraint(:sku)
   end
 end
