@@ -17,6 +17,7 @@ defmodule Bazaar.Product do
     field(:deleted_at, :naive_datetime)
 
     belongs_to(:user, Bazaar.User)
+    many_to_many(:categories, Bazaar.Category, join_through: "categories_products")
 
     timestamps()
   end

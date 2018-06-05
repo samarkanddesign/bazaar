@@ -11,9 +11,10 @@
 # and so on) as they will fail if something goes wrong.
 alias Bazaar.Repo
 
-Repo.delete_all(Bazaar.Role)
-Repo.delete_all(Bazaar.User)
 Repo.delete_all(Bazaar.Product)
+Repo.delete_all(Bazaar.User)
+Repo.delete_all(Bazaar.Role)
+Repo.delete_all(Bazaar.Category)
 
 admin_role =
   Repo.insert!(%Bazaar.Role{
@@ -39,12 +40,27 @@ Bazaar.Repo.insert!(%Bazaar.Product{
   user_id: admin_user.id
 })
 
-Bazaar.Repo.insert!(%Bazaar.Product{
-  name: "Average product",
-  slug: "average-product",
-  description: "This is an average product",
-  price: 1050,
-  sku: "AV1",
-  stock_qty: 5,
-  user_id: admin_user.id
-})
+prod2 =
+  Bazaar.Repo.insert!(%Bazaar.Product{
+    name: "Average product",
+    slug: "average-product",
+    description: "This is an average product",
+    price: 1050,
+    sku: "AV1",
+    stock_qty: 5,
+    user_id: admin_user.id
+  })
+
+cat1 =
+  Bazaar.Repo.insert!(%Bazaar.Category{
+    term: "Lampshades",
+    slug: "lampshades"
+  })
+
+prod_with_cat =
+  prod2
+  |> Repo.preload(:categories)
+  |> Ecto.Changeset.change()
+  |> Ecto.Changeset.put_assoc(:categories, [cat1])
+
+Repo.update!(prod_with_cat)

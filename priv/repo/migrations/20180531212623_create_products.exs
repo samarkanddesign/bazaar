@@ -11,7 +11,7 @@ defmodule Bazaar.Repo.Migrations.CreateProducts do
       add(:sale_price, :integer, null: true)
       add(:stock_qty, :integer, null: true)
       add(:sku, :string, null: false)
-      add(:user_id, :integer)
+      add(:user_id, references(:users))
       add(:location, :string, null: true)
       add(:featured, :boolean, null: false, default: false)
       add(:listed, :boolean, null: false, default: true)
