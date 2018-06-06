@@ -3,7 +3,7 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
   alias Bazaar.Repo
 
   def all(_root, _args, _info) do
-    products = Repo.all(Product)
+    products = Repo.all(Product) |> Repo.preload(:categories)
     {:ok, products}
   end
 

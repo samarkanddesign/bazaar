@@ -3,6 +3,7 @@ defmodule Bazaar.GraphQl.Schema do
   use Absinthe.Ecto, repo: Bazaar.Repo
 
   alias Bazaar.GraphQl.Resolvers.ProductResolver
+  alias Bazaar.GraphQl.Resolvers.CategoryResolver
 
   import_types(Absinthe.Type.Custom)
 
@@ -19,6 +20,18 @@ defmodule Bazaar.GraphQl.Schema do
     field(:featured, non_null(:boolean))
     field(:listed, non_null(:boolean))
     field(:created_at, non_null(:naive_datetime), resolve: &resolve_created_date/3)
+
+    field(:categories, non_null(list_of(non_null(:category))), resolve: assoc(:categories))
+  end
+
+  object :category do
+    field(:id, non_null(:id))
+
+    field(:term, non_null(:string))
+    field(:slug, non_null(:string))
+    field(:order, non_null(:integer))
+
+    field(:products, non_null(list_of(non_null(:product))), resolve: assoc(:products))
   end
 
   object :create_product_response do
@@ -34,6 +47,10 @@ defmodule Bazaar.GraphQl.Schema do
   query do
     field(:products, non_null(list_of(non_null(:product)))) do
       resolve(&ProductResolver.all/3)
+    end
+
+    field(:categories, non_null(list_of(non_null(:category)))) do
+      resolve(&CategoryResolver.all/3)
     end
   end
 

@@ -17,5 +17,7 @@ defmodule Bazaar.Category do
     category
     |> cast(attrs, [:term, :slug, :order])
     |> validate_required([:term, :slug])
+    |> unique_constraint(:slug)
+    |> unique_constraint(:term)
   end
 end
