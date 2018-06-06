@@ -45,12 +45,28 @@ defmodule Bazaar.GraphQl.Schema do
   end
 
   query do
+    @desc "Get all products"
     field(:products, non_null(list_of(non_null(:product)))) do
       resolve(&ProductResolver.all/3)
     end
 
+    @desc "Get a single product by id or slug"
+    field(:product, :product) do
+      arg(:id, :id)
+      arg(:slug, :string)
+      resolve(&ProductResolver.get/3)
+    end
+
+    @desc "Get all categories"
     field(:categories, non_null(list_of(non_null(:category)))) do
       resolve(&CategoryResolver.all/3)
+    end
+
+    @desc "Get a single category by id or slug"
+    field(:category, :category) do
+      arg(:id, :id)
+      arg(:slug, :string)
+      resolve(&CategoryResolver.get/3)
     end
   end
 
@@ -85,12 +101,9 @@ defmodule Bazaar.GraphQl.Schema do
   end
 
   def format_changeset(changeset) do
-    # {:error, [email: {"has already been taken", []}]}
     errors =
       changeset.errors
       |> Enum.map(fn {key, {value, _context}} -> %{key: key, reason: value} end)
-
-    IO.inspect(errors)
 
     {:ok, %{errors: errors}}
   end
