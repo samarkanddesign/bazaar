@@ -1,5 +1,6 @@
 defmodule Bazaar.Repo do
   use Ecto.Repo, otp_app: :bazaar
+  use Scrivener, page_size: 7
 
   @doc """
   Dynamically loads the repository url from the

@@ -47,6 +47,7 @@ defmodule Bazaar.GraphQl.Schema do
   query do
     @desc "Get all products"
     field(:products, non_null(list_of(non_null(:product)))) do
+      arg(:page, :integer)
       resolve(&ProductResolver.all/3)
     end
 

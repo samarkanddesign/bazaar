@@ -20,7 +20,7 @@ defmodule Bazaar.Mixfile do
   def application do
     [
       mod: {Bazaar.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :scrivener_ecto]
     ]
   end
 
@@ -44,7 +44,8 @@ defmodule Bazaar.Mixfile do
       {:absinthe, "~> 1.4.0"},
       {:absinthe_ecto, "~> 0.1.3"},
       {:absinthe_plug, "~> 1.4.1"},
-      {:faker, "~> 0.10", only: :dev}
+      {:faker, "~> 0.10", only: :dev},
+      {:scrivener_ecto, "~> 1.0"}
     ]
   end
 
