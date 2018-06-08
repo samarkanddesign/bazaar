@@ -39,14 +39,28 @@ defmodule Bazaar.GraphQl.Schema do
     field(:errors, list_of(:error))
   end
 
+  @desc "A validation error"
   object :error do
     field(:key, non_null(:string))
     field(:reason, non_null(:string))
   end
 
+  @desc "Pagination information for a paged query"
+  object :pagination do
+    field(:page_number, non_null(:integer))
+    field(:page_size, non_null(:integer))
+    field(:total_pages, non_null(:integer))
+    field(:total_entries, non_null(:integer))
+  end
+
+  object :paged_products do
+    field(:items, non_null(list_of(non_null(:product))))
+    field(:pagination, non_null(:pagination))
+  end
+
   query do
-    @desc "Get all products"
-    field(:products, non_null(list_of(non_null(:product)))) do
+    @desc "Get a paginated list of products"
+    field(:products, :paged_products) do
       arg(:page, :integer)
       resolve(&ProductResolver.all/3)
     end
@@ -71,6 +85,7 @@ defmodule Bazaar.GraphQl.Schema do
     end
   end
 
+  @desc "Create a new product"
   mutation do
     field :create_product, type: :create_product_response do
       arg(:name, non_null(:string))

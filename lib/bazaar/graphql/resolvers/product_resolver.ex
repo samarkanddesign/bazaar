@@ -6,11 +6,20 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
   def all(_root, args, _info) do
     page =
       Product
-      |> order_by(desc: :created_at)
+      |> order_by(desc: :inserted_at)
       |> preload(:categories)
       |> Repo.paginate(page: Map.get(args, :page, 1))
 
-    {:ok, page.entries}
+    {:ok,
+     %{
+       items: page.entries,
+       pagination: %{
+         page_number: page.page_number,
+         page_size: page.page_size,
+         total_pages: page.total_pages,
+         total_entries: page.total_entries
+       }
+     }}
   end
 
   def get(_root, %{id: id}, _info) do
