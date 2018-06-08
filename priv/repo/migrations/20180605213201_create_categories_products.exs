@@ -3,8 +3,8 @@ defmodule Bazaar.Repo.Migrations.CreateCategoriesProducts do
 
   def up do
     create table(:categories_products) do
-      add(:category_id, references(:categories))
-      add(:product_id, references(:products))
+      add(:category_id, references(:categories, on_delete: :delete_all))
+      add(:product_id, references(:products, on_delete: :delete_all))
     end
 
     create(unique_index(:categories_products, [:category_id, :product_id]))

@@ -7,7 +7,12 @@ defmodule Bazaar.Category do
     field(:slug, :string)
     field(:term, :string)
 
-    many_to_many(:products, Bazaar.Product, join_through: "categories_products")
+    many_to_many(
+      :products,
+      Bazaar.Product,
+      join_through: "categories_products",
+      on_delete: :delete_all
+    )
 
     timestamps()
   end

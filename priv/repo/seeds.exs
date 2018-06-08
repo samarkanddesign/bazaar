@@ -11,6 +11,18 @@
 # and so on) as they will fail if something goes wrong.
 alias Bazaar.Repo
 
+defmodule Utils do
+  def slugify(str) do
+    str
+    |> String.downcase()
+    |> String.replace(" ", "-")
+    |> String.replace(",", "")
+    |> String.replace("&", "and")
+  end
+end
+
+Faker.start()
+
 Repo.delete_all(Bazaar.Product)
 Repo.delete_all(Bazaar.User)
 Repo.delete_all(Bazaar.Role)
@@ -30,37 +42,32 @@ admin_user =
     role_id: admin_role.id
   })
 
-Bazaar.Repo.insert!(%Bazaar.Product{
-  name: "Awesome product",
-  slug: "awesome-product",
-  description: "This is an awesome product",
-  price: 2250,
-  sku: "AP1",
-  stock_qty: 10,
-  user_id: admin_user.id
-})
+categories =
+  Enum.map(["Furnishings", "Lampshades", "Accessories"], fn cat ->
+    Bazaar.Repo.insert!(%Bazaar.Category{
+      term: cat,
+      slug: Utils.slugify(cat)
+    })
+  end)
 
-prod2 =
+max_cat = Enum.count(categories) - 1
+
+Enum.each(1..15, fn _ ->
+  name = Faker.Commerce.product_name()
+  sku = Faker.Lorem.characters(2..4) |> to_string |> String.upcase()
+  related_cat = Enum.at(categories, Faker.random_between(0, max_cat))
+
   Bazaar.Repo.insert!(%Bazaar.Product{
-    name: "Average product",
-    slug: "average-product",
-    description: "This is an average product",
-    price: 1050,
-    sku: "AV1",
-    stock_qty: 5,
+    name: name,
+    slug: Utils.slugify(name),
+    description: Faker.Lorem.paragraph(),
+    price: Faker.random_between(1, 200),
+    sku: sku,
+    stock_qty: Faker.random_between(0, 20),
     user_id: admin_user.id
   })
-
-cat1 =
-  Bazaar.Repo.insert!(%Bazaar.Category{
-    term: "Lampshades",
-    slug: "lampshades"
-  })
-
-prod_with_cat =
-  prod2
   |> Repo.preload(:categories)
   |> Ecto.Changeset.change()
-  |> Ecto.Changeset.put_assoc(:categories, [cat1])
-
-Repo.update!(prod_with_cat)
+  |> Ecto.Changeset.put_assoc(:categories, [related_cat])
+  |> Repo.update!()
+end)
