@@ -45,7 +45,8 @@ defmodule Bazaar.Mixfile do
       {:absinthe_ecto, "~> 0.1.3"},
       {:absinthe_plug, "~> 1.4.1"},
       {:faker, "~> 0.10", only: :dev},
-      {:scrivener_ecto, "~> 1.0"}
+      {:scrivener_ecto, "~> 1.0"},
+      {:cors_plug, "~> 1.5"}
     ]
   end
 

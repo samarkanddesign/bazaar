@@ -27,6 +27,13 @@ defmodule BazaarWeb.Router do
       schema: Bazaar.GraphQl.Schema,
       context: %{pubsub: Bazaar.Endpoint}
     )
+
+    forward(
+      "/graphql",
+      Absinthe.Plug,
+      schema: Bazaar.GraphQl.Schema,
+      context: %{pubsub: Bazaar.Endpoint}
+    )
   end
 
   # Other scopes may use custom stacks.
