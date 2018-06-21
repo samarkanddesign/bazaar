@@ -4,6 +4,7 @@ defmodule Bazaar.Repo.Migrations.CreateProductImage do
   def change do
     create table(:product_images) do
       add(:image, :string)
+      add(:product_id, references(:products))
 
       timestamps()
     end

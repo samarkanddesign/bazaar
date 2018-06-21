@@ -2,6 +2,7 @@
 <%= form_for @changeset, product_image_path(@conn, :create), [multipart: true], fn f -> %>
   <div class="form-group">
     <label>Image</label>
+    <%= select f, :product_id, @products, class: "form-control" %>
     <%= file_input f, :image %>
     <%= error_tag f, :image %>
   </div>

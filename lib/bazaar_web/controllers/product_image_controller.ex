@@ -2,6 +2,7 @@ defmodule BazaarWeb.ProductImageController do
   use BazaarWeb, :controller
 
   alias Bazaar.ProductImage
+  alias Bazaar.Product
   alias Bazaar.Repo
 
   def index(conn, _) do
@@ -11,7 +12,8 @@ defmodule BazaarWeb.ProductImageController do
 
   def new(conn, _) do
     changeset = ProductImage.changeset(%ProductImage{})
-    render(conn, "new.html", changeset: changeset)
+    products = Repo.all(Product) |> Enum.map(&{&1.name, &1.id})
+    render(conn, "new.html", changeset: changeset, products: products)
   end
 
   def create(conn, %{"product_image" => image_params}) do
@@ -22,7 +24,7 @@ defmodule BazaarWeb.ProductImageController do
     IO.inspect(changeset)
 
     case Repo.insert(changeset) do
-      {:ok, image} ->
+      {:ok, _} ->
         conn
         |> put_flash(:info, "Image was added")
         |> redirect(to: product_image_path(conn, :new))

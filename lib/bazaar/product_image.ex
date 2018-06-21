@@ -6,6 +6,7 @@ defmodule Bazaar.ProductImage do
 
   schema "product_images" do
     field(:image, Bazaar.Uploaders.ProductImage.Type)
+    belongs_to(:product, Bazaar.Product)
     # field(:upload, :any, virtual: true)
 
     timestamps()
@@ -14,8 +15,9 @@ defmodule Bazaar.ProductImage do
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
-  def changeset(struct, params \\ %{}) do
-    struct
+  def changeset(image, params \\ %{}) do
+    image
+    |> cast(params, [:product_id])
     |> cast_attachments(params, [:image])
     |> validate_required([:image])
 
