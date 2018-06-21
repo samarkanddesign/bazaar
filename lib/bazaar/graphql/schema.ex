@@ -21,7 +21,17 @@ defmodule Bazaar.GraphQl.Schema do
     field(:listed, non_null(:boolean))
     field(:created_at, non_null(:naive_datetime), resolve: &resolve_created_date/3)
 
+    field(
+      :images,
+      non_null(list_of(non_null(:product_image))),
+      resolve: &resolve_product_images/3
+    )
+
     field(:categories, non_null(list_of(non_null(:category))), resolve: assoc(:categories))
+  end
+
+  object :product_image do
+    field(:url, non_null(:string))
   end
 
   object :category do
@@ -104,6 +114,13 @@ defmodule Bazaar.GraphQl.Schema do
 
   def resolve_created_date(_root, _args, %{source: %{inserted_at: inserted_at}}) do
     {:ok, inserted_at}
+  end
+
+  def resolve_product_images(_root, _args, %{source: %{product_images: product_images}}) do
+    {:ok,
+     Enum.map(product_images, fn image ->
+       %{url: Bazaar.Uploaders.ProductImage.url(image.image, image)}
+     end)}
   end
 
   def handle_errors(fun) do

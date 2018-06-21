@@ -8,6 +8,7 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
       Product
       |> order_by(desc: :inserted_at)
       |> preload(:categories)
+      |> preload(:product_images)
       |> Repo.paginate(page: Map.get(args, :page, 1))
 
     {:ok,

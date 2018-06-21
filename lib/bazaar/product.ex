@@ -18,6 +18,8 @@ defmodule Bazaar.Product do
 
     belongs_to(:user, Bazaar.User)
 
+    has_many(:product_images, Bazaar.ProductImage)
+
     many_to_many(
       :categories,
       Bazaar.Category,
