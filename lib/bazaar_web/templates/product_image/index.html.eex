@@ -1,0 +1,4 @@
+<h4><%= link "Upload new image", to: product_image_path(@conn, :new) %></h4>
+<%= for image <- @images do %>
+  <img src="<%= Bazaar.Uploaders.ProductImage.url({image.image, image})%>"><br>
+<% end %>

@@ -18,6 +18,7 @@ defmodule BazaarWeb.Router do
     pipe_through(:browser)
 
     get("/", PageController, :index)
+    resources("/product_images", ProductImageController)
   end
 
   scope "/" do
