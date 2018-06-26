@@ -3,6 +3,12 @@ defmodule Bazaar.Uploaders.ProductImage do
   use Arc.Ecto.Definition
 
   def __storage, do: Arc.Storage.Local
+
+  def storage_dir(_version, {_file, scope}) do
+    IO.inspect({"SCOPYSCOPE", scope})
+    "uploads/products/#{scope.product_id}"
+  end
+
   # @acl :public_read
   # @versions [:original, :show, :thumb]
 

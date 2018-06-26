@@ -18,7 +18,11 @@ defmodule BazaarWeb.Router do
     pipe_through(:browser)
 
     get("/", PageController, :index)
-    resources("/product_images", ProductImageController)
+  end
+
+  scope "/api", BazaarWeb do
+    pipe_through(:api)
+    post("/product_images", ProductImageController, :create)
   end
 
   scope "/" do

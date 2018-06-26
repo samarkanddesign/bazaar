@@ -16,23 +16,18 @@ defmodule BazaarWeb.ProductImageController do
     render(conn, "new.html", changeset: changeset, products: products)
   end
 
-  def create(conn, %{"product_image" => image_params}) do
-    IO.inspect(image_params)
-    # text(conn, "Uploaded")
+  def create(conn, params) do
+    IO.inspect(params)
 
-    changeset = ProductImage.changeset(%ProductImage{}, image_params)
+    changeset = ProductImage.changeset(%ProductImage{}, params)
     IO.inspect(changeset)
 
     case Repo.insert(changeset) do
       {:ok, _} ->
-        conn
-        |> put_flash(:info, "Image was added")
-        |> redirect(to: product_image_path(conn, :new))
+        text(conn, "ok")
 
-      {:error, changeset} ->
-        conn
-        |> put_flash(:error, "Something went wrong")
-        |> render("new.html", changeset: changeset)
+      {:error, _changeset} ->
+        text(conn, "error")
     end
   end
 end
