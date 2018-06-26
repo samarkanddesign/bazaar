@@ -59,7 +59,7 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
        %{
          url:
            base_url
-           |> URI.merge(Bazaar.Uploaders.ProductImage.url({image.image, image}))
+           |> URI.merge(Bazaar.Uploaders.ProductImage.url({image.image, image}, :show))
            |> URI.to_string()
        }
      end)}
