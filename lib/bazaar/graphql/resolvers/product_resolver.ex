@@ -49,19 +49,31 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
   def product_images(_root, _args, context) do
     product = context.source
 
-    base_url =
-      BazaarWeb.Endpoint.struct_url()
-      |> URI.to_string()
-      |> URI.parse()
-
     {:ok,
      Enum.map(product.product_images, fn image ->
        %{
-         url:
-           base_url
-           |> URI.merge(Bazaar.Uploaders.ProductImage.url({image.image, image}, :show))
-           |> URI.to_string()
+         id: image.id,
+         url: product_image_url(image)
        }
      end)}
+  end
+
+  def thumbnail(_root, _args, %{source: product}) do
+    case Enum.at(product.product_images, 0) do
+      nil -> {:ok, nil}
+      image -> {:ok, %{id: image.id, url: product_image_url(image, :thumb)}}
+    end
+  end
+
+  def base_url do
+    BazaarWeb.Endpoint.struct_url()
+    |> URI.to_string()
+    |> URI.parse()
+  end
+
+  def product_image_url(product_image, size \\ :show) do
+    base_url()
+    |> URI.merge(Bazaar.Uploaders.ProductImage.url({product_image.image, product_image}, size))
+    |> URI.to_string()
   end
 end

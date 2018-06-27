@@ -24,10 +24,14 @@ defmodule BazaarWeb.ProductImageController do
 
     case Repo.insert(changeset) do
       {:ok, _} ->
-        text(conn, "ok")
+        conn
+        |> put_status(201)
+        |> text("ok")
 
       {:error, _changeset} ->
-        text(conn, "error")
+        conn
+        |> put_status(400)
+        |> text("error")
     end
   end
 end

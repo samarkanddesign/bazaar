@@ -21,6 +21,8 @@ defmodule Bazaar.GraphQl.Schema do
     field(:listed, non_null(:boolean))
     field(:created_at, non_null(:naive_datetime), resolve: &resolve_created_date/3)
 
+    field(:thumbnail, :product_image, resolve: &ProductResolver.thumbnail/3)
+
     field(
       :images,
       non_null(list_of(non_null(:product_image))),
@@ -31,6 +33,7 @@ defmodule Bazaar.GraphQl.Schema do
   end
 
   object :product_image do
+    field(:id, non_null(:id))
     field(:url, non_null(:string))
   end
 

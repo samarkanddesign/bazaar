@@ -5,7 +5,6 @@ defmodule Bazaar.Uploaders.ProductImage do
   def __storage, do: Arc.Storage.Local
 
   def storage_dir(version, {_file, scope}) do
-    IO.inspect({"SCOPYSCOPE", scope})
     "uploads/products/#{scope.product_id}/#{version}"
   end
 
