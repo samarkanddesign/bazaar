@@ -13,7 +13,7 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
 
     {:ok,
      %{
-       items: page.entries,
+       products: page.entries,
        pagination: %{
          page_number: page.page_number,
          page_size: page.page_size,
@@ -44,6 +44,18 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
   def create(_root, args, _info) do
     Product.changeset(%Product{}, args)
     |> Repo.insert()
+  end
+
+  def update(_root, args, _info) do
+    case Repo.get_by(Product, %{id: args.id}) do
+      nil ->
+        {:error, "Product does not exist"}
+
+      product ->
+        product
+        |> Product.changeset(args)
+        |> Repo.update()
+    end
   end
 
   def product_images(_root, _args, context) do

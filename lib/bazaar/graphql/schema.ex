@@ -52,6 +52,11 @@ defmodule Bazaar.GraphQl.Schema do
     field(:errors, list_of(:error))
   end
 
+  object :update_product_response do
+    field(:product, :product)
+    field(:errors, list_of(:error))
+  end
+
   @desc "A validation error"
   object :error do
     field(:key, non_null(:string))
@@ -67,13 +72,13 @@ defmodule Bazaar.GraphQl.Schema do
   end
 
   object :paged_products do
-    field(:items, non_null(list_of(non_null(:product))))
+    field(:products, non_null(list_of(non_null(:product))))
     field(:pagination, non_null(:pagination))
   end
 
   query do
     @desc "Get a paginated list of products"
-    field(:products, :paged_products) do
+    field(:product_list, :paged_products) do
       arg(:page, :integer)
       resolve(&ProductResolver.all/3)
     end
@@ -112,6 +117,22 @@ defmodule Bazaar.GraphQl.Schema do
       arg(:listed, :boolean)
 
       resolve(handle_errors(&ProductResolver.create/3))
+    end
+
+    @desc "Update an existing product"
+    field :update_product, type: :update_product_response do
+      arg(:id, non_null(:id))
+      arg(:name, :string)
+      arg(:description, :string)
+      arg(:slug, :string)
+      arg(:sku, :string)
+      arg(:price, :integer)
+      arg(:sale_price, :integer)
+      arg(:stock_qty, :integer)
+      arg(:featured, :boolean)
+      arg(:listed, :boolean)
+
+      resolve(handle_errors(&ProductResolver.update/3))
     end
   end
 
