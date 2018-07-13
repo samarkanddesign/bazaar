@@ -90,6 +90,11 @@ defmodule Bazaar.GraphQl.Schema do
       resolve(&ProductResolver.get/3)
     end
 
+    field(:cart_products, non_null(list_of(:product))) do
+      arg(:ids, non_null(list_of(:id)))
+      resolve(&ProductResolver.cart_products/3)
+    end
+
     @desc "Get all categories"
     field(:categories, non_null(list_of(non_null(:category)))) do
       resolve(&CategoryResolver.all/3)
