@@ -13,7 +13,7 @@ config :logger, level: :warn
 config :bazaar, Bazaar.Repo,
   adapter: Ecto.Adapters.MySQL,
   username: "root",
-  password: "",
+  password: "secret",
   database: "bazaar_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

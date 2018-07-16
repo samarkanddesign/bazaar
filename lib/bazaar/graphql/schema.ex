@@ -76,6 +76,18 @@ defmodule Bazaar.GraphQl.Schema do
     field(:pagination, non_null(:pagination))
   end
 
+  object :basket do
+    field(:items, non_null(list_of(:basket_item)))
+    field(:created_at, non_null(:naive_datetime), resolve: &resolve_created_date/3)
+    field(:updated_at, non_null(:naive_datetime))
+  end
+
+  object :basket_item do
+    field(:product, non_null(:product))
+    field(:price, non_null(:integer))
+    field(:quantity, non_null(:integer))
+  end
+
   query do
     @desc "Get a paginated list of products"
     field(:product_list, :paged_products) do
