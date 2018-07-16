@@ -48,7 +48,8 @@ defmodule Bazaar.Mixfile do
       {:scrivener_ecto, "~> 1.0"},
       {:cors_plug, "~> 1.5"},
       {:arc, "~> 0.10.0"},
-      {:arc_ecto, "~> 0.10.0"}
+      {:arc_ecto, "~> 0.10.0"},
+      {:ex_machina, "~> 2.2", only: :test}
     ]
   end
 
