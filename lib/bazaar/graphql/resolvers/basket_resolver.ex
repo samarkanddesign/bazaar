@@ -11,9 +11,10 @@ defmodule Bazaar.GraphQl.Resolvers.BasketResolver do
       ) do
     case Repo.get_by(Product, %{id: product_id, listed: true}) do
       nil ->
-        {:error, "Cannot add product to basket"}
+        {:error,
+         "Cannot add product to basket. Either it does not exist or is not available for purchase."}
 
-      product ->
+      _ ->
         basket =
           case Repo.get_by(Basket, %{basket_id: basket_id}) do
             nil -> %Basket{basket_id: basket_id}
@@ -28,8 +29,7 @@ defmodule Bazaar.GraphQl.Resolvers.BasketResolver do
               %BasketItem{
                 basket_id: basket.id,
                 product_id: product_id,
-                quantity: 0,
-                price: product.price
+                quantity: 0
               }
 
             i ->
