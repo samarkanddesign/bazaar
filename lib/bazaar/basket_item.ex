@@ -3,7 +3,6 @@ defmodule Bazaar.BasketItem do
   import Ecto.Changeset
 
   schema "basket_items" do
-    field(:price, :integer)
     field(:quantity, :integer)
 
     belongs_to(:basket, Bazaar.Basket)

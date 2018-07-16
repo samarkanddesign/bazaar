@@ -27,8 +27,7 @@ defmodule Bazaar.Factory do
     %Bazaar.BasketItem{
       basket: build(:basket),
       product: build(:product),
-      quantity: 1,
-      price: 100
+      quantity: 1
     }
   end
 end
