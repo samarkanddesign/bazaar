@@ -120,6 +120,13 @@ defmodule Bazaar.GraphQl.Schema do
       arg(:slug, :string)
       resolve(&CategoryResolver.get/3)
     end
+
+    @desc "Get a basket by its identifier"
+    field(:basket, :basket) do
+      arg(:basket_id, :string)
+
+      resolve(&BasketResolver.get_basket/3)
+    end
   end
 
   @desc "Create a new product"
