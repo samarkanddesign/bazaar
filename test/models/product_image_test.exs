@@ -3,7 +3,6 @@ defmodule Bazaar.ProductImageTest do
 
   alias Bazaar.ProductImage
 
-  @valid_attrs %{name: "some name", product_id: 1}
   @invalid_attrs %{}
 
   # test "changeset with valid attributes" do

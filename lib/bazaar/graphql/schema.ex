@@ -79,14 +79,14 @@ defmodule Bazaar.GraphQl.Schema do
 
   object :basket do
     field(:basket_id, non_null(:string))
-    field(:basket_items, non_null(list_of(:basket_item)))
+    field(:items, non_null(list_of(:basket_item)), resolve: assoc(:basket_items))
     field(:created_at, non_null(:naive_datetime), resolve: &resolve_created_date/3)
     field(:updated_at, non_null(:naive_datetime))
   end
 
   object :basket_item do
     field(:id, non_null(:id))
-    field(:product, non_null(:product))
+    field(:product, non_null(:product), resolve: assoc(:product))
     field(:quantity, non_null(:integer))
   end
 
@@ -154,12 +154,20 @@ defmodule Bazaar.GraphQl.Schema do
       resolve(handle_errors(&ProductResolver.update/3))
     end
 
+    @desc "Add a product to the basket using an existing or new basket identifier"
     field :add_product_to_basket, type: :basket do
       arg(:basket_id, non_null(:string))
-      arg(:product_id, non_null(:id))
+      arg(:product_id, non_null(:integer))
       arg(:quantity, non_null(:integer))
 
       resolve(&BasketResolver.add_item_to_basket/3)
+    end
+
+    field :remove_product_from_basket, type: :basket do
+      arg(:basket_id, non_null(:string))
+      arg(:item_id, non_null(:integer))
+
+      resolve(&BasketResolver.remove_item_from_basket/3)
     end
   end
 
