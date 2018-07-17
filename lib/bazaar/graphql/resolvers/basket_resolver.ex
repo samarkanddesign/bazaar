@@ -14,16 +14,44 @@ defmodule Bazaar.GraphQl.Resolvers.BasketResolver do
         {:error,
          "Cannot add product to basket. Either it does not exist or is not available for purchase."}
 
-      _ ->
+      product ->
         basket = get_basket(basket_id)
-        item = get_basket_item(basket.id, String.to_integer(product_id))
+        item = get_basket_item(basket.id, product_id)
+        current_quantity_in_basket = item.quantity
 
-        BasketItem.changeset(item, %{quantity: item.quantity + quantity})
-        |> Repo.insert_or_update!()
+        case product.stock_qty do
+          qty when qty <= quantity + current_quantity_in_basket ->
+            {:error, "There is not enough stock to add this to the basket"}
 
-        result = basket |> Repo.preload(basket_items: :product)
+          _ ->
+            BasketItem.changeset(item, %{quantity: item.quantity + quantity})
+            |> Repo.insert_or_update!()
 
-        {:ok, result}
+            result = basket
+
+            {:ok, result}
+        end
+    end
+  end
+
+  def remove_item_from_basket(
+        _root,
+        %{basket_id: basket_id, item_id: item_id},
+        _info
+      ) do
+    case Repo.get_by(Basket, %{basket_id: basket_id}) do
+      nil ->
+        {:error, "A basket with this ID does not exist"}
+
+      basket ->
+        case Repo.get_by(BasketItem, %{basket_id: basket.id, id: item_id}) do
+          nil ->
+            {:ok, basket}
+
+          item ->
+            Repo.delete!(item)
+            {:ok, basket}
+        end
     end
   end
 
