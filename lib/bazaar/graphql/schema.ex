@@ -4,6 +4,7 @@ defmodule Bazaar.GraphQl.Schema do
 
   alias Bazaar.GraphQl.Resolvers.ProductResolver
   alias Bazaar.GraphQl.Resolvers.CategoryResolver
+  alias Bazaar.GraphQl.Resolvers.BasketResolver
 
   import_types(Absinthe.Type.Custom)
 
@@ -77,14 +78,15 @@ defmodule Bazaar.GraphQl.Schema do
   end
 
   object :basket do
-    field(:items, non_null(list_of(:basket_item)))
+    field(:basket_id, non_null(:string))
+    field(:basket_items, non_null(list_of(:basket_item)))
     field(:created_at, non_null(:naive_datetime), resolve: &resolve_created_date/3)
     field(:updated_at, non_null(:naive_datetime))
   end
 
   object :basket_item do
+    field(:id, non_null(:id))
     field(:product, non_null(:product))
-    field(:price, non_null(:integer))
     field(:quantity, non_null(:integer))
   end
 
@@ -150,6 +152,14 @@ defmodule Bazaar.GraphQl.Schema do
       arg(:listed, :boolean)
 
       resolve(handle_errors(&ProductResolver.update/3))
+    end
+
+    field :add_product_to_basket, type: :basket do
+      arg(:basket_id, non_null(:string))
+      arg(:product_id, non_null(:id))
+      arg(:quantity, non_null(:integer))
+
+      resolve(&BasketResolver.add_item_to_basket/3)
     end
   end
 
