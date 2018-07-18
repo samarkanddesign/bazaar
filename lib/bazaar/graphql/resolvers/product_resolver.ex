@@ -62,11 +62,9 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
     end
   end
 
-  def product_images(_root, _args, context) do
-    product = context.source
-
+  def product_images(_root, _args, %{source: product}) do
     {:ok,
-     Enum.map(product.product_images, fn image ->
+     Enum.map(get_product_images(product), fn image ->
        %{
          id: image.id,
          url: product_image_url(image)
@@ -75,10 +73,18 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
   end
 
   def thumbnail(_root, _args, %{source: product}) do
-    case Enum.at(product.product_images, 0) do
+    case get_product_images(product) |> Enum.at(0) do
       nil -> {:ok, nil}
       image -> {:ok, %{id: image.id, url: product_image_url(image, :thumb)}}
     end
+  end
+
+  defp get_product_images(product) do
+    case Ecto.assoc_loaded?(product.product_images) do
+      false -> Repo.preload(product, :product_images)
+      true -> product
+    end
+    |> Map.get(:product_images)
   end
 
   def base_url do
