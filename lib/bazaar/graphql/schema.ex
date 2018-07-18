@@ -78,8 +78,9 @@ defmodule Bazaar.GraphQl.Schema do
   end
 
   object :basket do
+    field(:id, non_null(:id))
     field(:basket_id, non_null(:string))
-    field(:items, non_null(list_of(:basket_item)), resolve: assoc(:basket_items))
+    field(:items, non_null(list_of(non_null(:basket_item))), resolve: assoc(:basket_items))
     field(:created_at, non_null(:naive_datetime), resolve: &resolve_created_date/3)
     field(:updated_at, non_null(:naive_datetime))
   end
@@ -104,8 +105,8 @@ defmodule Bazaar.GraphQl.Schema do
       resolve(&ProductResolver.get/3)
     end
 
-    field(:cart_products, non_null(list_of(:product))) do
-      arg(:ids, non_null(list_of(:id)))
+    field(:cart_products, non_null(list_of(non_null(:product)))) do
+      arg(:ids, non_null(list_of(non_null(:id))))
       resolve(&ProductResolver.cart_products/3)
     end
 
@@ -122,8 +123,8 @@ defmodule Bazaar.GraphQl.Schema do
     end
 
     @desc "Get a basket by its identifier"
-    field(:basket, :basket) do
-      arg(:basket_id, :string)
+    field(:basket, non_null(:basket)) do
+      arg(:basket_id, non_null(:string))
 
       resolve(&BasketResolver.get_basket/3)
     end

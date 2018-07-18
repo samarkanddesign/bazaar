@@ -5,7 +5,13 @@ defmodule Bazaar.GraphQl.Resolvers.BasketResolver do
   alias Bazaar.Basket
 
   def get_basket(_root, %{basket_id: basket_id}, _context) do
-    {:ok, Repo.get_by(Basket, %{basket_id: basket_id})}
+    basket =
+      case Repo.get_by(Basket, %{basket_id: basket_id}) do
+        nil -> get_basket(basket_id)
+        basket -> basket
+      end
+
+    {:ok, basket}
   end
 
   def add_item_to_basket(
