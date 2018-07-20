@@ -18,9 +18,7 @@ defmodule Bazaar.Factory do
   end
 
   def basket_factory do
-    %Bazaar.Basket{
-      basket_id: sequence(:basket_id, &"basket-#{&1}")
-    }
+    %Bazaar.Basket{}
   end
 
   def basket_item_factory do

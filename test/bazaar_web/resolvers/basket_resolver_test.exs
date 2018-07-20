@@ -4,19 +4,33 @@ defmodule BazaarWeb.BasketResolverTest do
   import Bazaar.Factory
   alias Bazaar.GraphQl.Resolvers.BasketResolver
 
-  test "Adding a product to a non-existent basket" do
+  test "Adding a product to an empty basket" do
     product = insert(:product)
+    basket = insert(:basket)
 
     {status, basket} =
       BasketResolver.add_item_to_basket(
         "",
-        %{product_id: product.id, quantity: 1, basket_id: "abc123"},
+        %{product_id: product.id, quantity: 1, basket_id: basket.id},
         ""
       )
 
     assert status == :ok
-    assert basket |> get_basket_items |> Enum.count() == 1
-    assert basket.basket_id == "abc123"
+    assert basket |> Repo.preload(:basket_items) |> Map.get(:basket_items) |> Enum.count() == 1
+  end
+
+  test "Adding a product to a non-existent basket" do
+    product = insert(:product)
+
+    {status, response} =
+      BasketResolver.add_item_to_basket(
+        "",
+        %{product_id: product.id, quantity: 1, basket_id: Ecto.UUID.generate()},
+        ""
+      )
+
+    assert status == :error
+    assert response == "basket does not exist"
   end
 
   test "Adding a product to a basket that already contains a different product" do
@@ -27,7 +41,7 @@ defmodule BazaarWeb.BasketResolverTest do
     {status, basket} =
       BasketResolver.add_item_to_basket(
         "",
-        %{product_id: product.id, quantity: 1, basket_id: basket_item.basket.basket_id},
+        %{product_id: product.id, quantity: 1, basket_id: basket_item.basket_id},
         ""
       )
 
@@ -44,11 +58,12 @@ defmodule BazaarWeb.BasketResolverTest do
       )
 
     assert status == :error
-    assert is_bitstring(message)
+    assert String.contains?(message, "Cannot add product to basket")
   end
 
   test "Adding more items to basket than are in stock" do
     product = insert(:product, %{stock_qty: 2})
+    basket = insert(:basket)
 
     {status, message} =
       BasketResolver.add_item_to_basket(
@@ -56,7 +71,7 @@ defmodule BazaarWeb.BasketResolverTest do
         %{
           product_id: product.id,
           quantity: 3,
-          basket_id: "abc12345"
+          basket_id: basket.id
         },
         ""
       )
@@ -72,7 +87,7 @@ defmodule BazaarWeb.BasketResolverTest do
       BasketResolver.remove_item_from_basket(
         "",
         %{
-          basket_id: basket_item.basket.basket_id,
+          basket_id: basket_item.basket_id,
           item_id: basket_item.id
         },
         ""

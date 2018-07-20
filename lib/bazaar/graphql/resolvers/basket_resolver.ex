@@ -5,13 +5,14 @@ defmodule Bazaar.GraphQl.Resolvers.BasketResolver do
   alias Bazaar.Basket
 
   def get_basket(_root, %{basket_id: basket_id}, _context) do
-    basket =
-      case Repo.get_by(Basket, %{basket_id: basket_id}) do
-        nil -> get_basket(basket_id)
-        basket -> basket
-      end
+    {:ok, Repo.get(Basket, basket_id)}
+  end
 
-    {:ok, basket}
+  def create_basket(_root, _, _context) do
+    case %Basket{} |> Basket.changeset(%{}) |> Repo.insert() do
+      {:ok, basket} -> {:ok, basket}
+      _ -> {:error, "Could not create basket"}
+    end
   end
 
   def add_item_to_basket(
@@ -25,21 +26,32 @@ defmodule Bazaar.GraphQl.Resolvers.BasketResolver do
          "Cannot add product to basket. Either it does not exist or is not available for purchase."}
 
       product ->
-        basket = get_basket(basket_id)
-        item = get_basket_item(basket.id, product_id)
-        current_quantity_in_basket = item.quantity
+        case Ecto.UUID.cast(basket_id) do
+          :error ->
+            {:error, "invalid uuid"}
 
-        case product.stock_qty do
-          qty when qty <= quantity + current_quantity_in_basket ->
-            {:error, "There is not enough stock to add this to the basket"}
+          {:ok, uuid} ->
+            case Repo.get(Basket, uuid) do
+              nil ->
+                {:error, "basket does not exist"}
 
-          _ ->
-            BasketItem.changeset(item, %{quantity: item.quantity + quantity})
-            |> Repo.insert_or_update!()
+              basket ->
+                item = get_basket_item(basket.id, product_id)
+                current_quantity_in_basket = item.quantity
 
-            result = basket
+                case product.stock_qty do
+                  qty_in_stock when qty_in_stock < quantity + current_quantity_in_basket ->
+                    {:error, "There is not enough stock to add this to the basket"}
 
-            {:ok, result}
+                  _ ->
+                    BasketItem.changeset(item, %{quantity: item.quantity + quantity})
+                    |> Repo.insert_or_update!()
+
+                    result = basket
+
+                    {:ok, result}
+                end
+            end
         end
     end
   end
@@ -49,29 +61,14 @@ defmodule Bazaar.GraphQl.Resolvers.BasketResolver do
         %{basket_id: basket_id, item_id: item_id},
         _info
       ) do
-    case Repo.get_by(Basket, %{basket_id: basket_id}) do
+    case Repo.get_by(BasketItem, %{id: item_id, basket_id: basket_id}) do
       nil ->
-        {:error, "A basket with this ID does not exist"}
+        {:error, "This item does not exist in this basket"}
 
-      basket ->
-        case Repo.get_by(BasketItem, %{basket_id: basket.id, id: item_id}) do
-          nil ->
-            {:ok, basket}
-
-          item ->
-            Repo.delete!(item)
-            {:ok, basket}
-        end
+      item ->
+        Repo.delete!(item)
+        {:ok, Repo.get(Basket, basket_id)}
     end
-  end
-
-  defp get_basket(basket_id) do
-    case Repo.get_by(Basket, %{basket_id: basket_id}) do
-      nil -> %Basket{basket_id: basket_id}
-      b -> b
-    end
-    |> Basket.changeset(%{})
-    |> Repo.insert_or_update!()
   end
 
   defp get_basket_item(basket_id, product_id) do
