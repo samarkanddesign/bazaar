@@ -5,7 +5,7 @@ defmodule Bazaar.BasketItem do
   schema "basket_items" do
     field(:quantity, :integer)
 
-    belongs_to(:basket, Bazaar.Basket)
+    belongs_to(:basket, Bazaar.Basket, type: :binary_id)
     belongs_to(:product, Bazaar.Product)
 
     timestamps()
