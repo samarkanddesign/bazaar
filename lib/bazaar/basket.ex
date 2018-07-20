@@ -2,9 +2,10 @@ defmodule Bazaar.Basket do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "baskets" do
-    field(:basket_id, :string)
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
 
+  schema "baskets" do
     has_many(:basket_items, Bazaar.BasketItem)
 
     timestamps()
@@ -13,6 +14,6 @@ defmodule Bazaar.Basket do
   @doc false
   def changeset(basket, attrs) do
     basket
-    |> cast(attrs, [:basket_id])
+    |> cast(attrs, [])
   end
 end
