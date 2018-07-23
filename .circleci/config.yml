@@ -22,8 +22,35 @@ jobs:
       - checkout
 
       # specify any bash command here prefixed with `run: `
-      - run: mix local.hex --force
-      - run: mix local.rebar --force
-      - run: mix deps.get
+      - run:
+          name: Install hex deps
+          command: |
+            mix local.hex --force
+            mix local.rebar --force
+      - restore_cache:
+          keys:
+            - mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+            - mix-cache-{{ .Branch }}
+            - mix-cache
+      - restore_cache:
+          keys:
+            - build-cache-{{ .Branch }}
+            - build-cache
+      - run: mix do deps.get, compile
       - run: mix ecto.create
       - run: mix test
+      - save_cache:
+          key: mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          paths: "deps"
+      - save_cache:
+          key: mix-cache-{{ .Branch }}
+          paths: "deps"
+      - save_cache:
+          key: mix-cache
+          paths: "deps"
+      - save_cache:
+          key: build-cache-{{ .Branch }}
+          paths: "_build"
+      - save_cache:
+          key: build-cache
+          paths: "_build"
