@@ -38,7 +38,7 @@ admin_user =
   Repo.insert!(%Bazaar.User{
     name: "Admin",
     email: "test@samarkanddesign.com",
-    password_hash: "$2a$04$6WxbBxHvlhDIShEswSUxYOG7UEYEHUPpwVt9tcfCxJokYQc.yKHDi",
+    password_hash: Comeonin.Bcrypt.hashpwsalt("secret"),
     role_id: admin_role.id
   })
 

@@ -49,7 +49,10 @@ defmodule Bazaar.Mixfile do
       {:cors_plug, "~> 1.5"},
       {:arc, "~> 0.10.0"},
       {:arc_ecto, "~> 0.10.0"},
-      {:ex_machina, "~> 2.2", only: :test}
+      {:ex_machina, "~> 2.2", only: :test},
+      {:guardian, "~> 1.0"},
+      {:comeonin, "~> 4.0"},
+      {:bcrypt_elixir, "~> 1.0"}
     ]
   end
 

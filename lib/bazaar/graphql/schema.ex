@@ -5,9 +5,16 @@ defmodule Bazaar.GraphQl.Schema do
   alias Bazaar.GraphQl.Resolvers.ProductResolver
   alias Bazaar.GraphQl.Resolvers.CategoryResolver
   alias Bazaar.GraphQl.Resolvers.BasketResolver
+  alias Bazaar.GraphQl.Resolvers.SessionResolver
 
   import_types(Absinthe.Type.Custom)
   import_types(Bazaar.Schema.Types.Custom.UUID)
+
+  object :user do
+    field(:id, non_null(:id))
+    field(:email, non_null(:string))
+    field(:name, non_null(:string))
+  end
 
   object :product do
     field(:id, non_null(:id))
@@ -91,6 +98,11 @@ defmodule Bazaar.GraphQl.Schema do
     field(:quantity, non_null(:integer))
   end
 
+  object :session do
+    field(:jwt, non_null(:string))
+    field(:user, non_null(:user))
+  end
+
   query do
     @desc "Get a paginated list of products"
     field(:product_list, :paged_products) do
@@ -132,6 +144,14 @@ defmodule Bazaar.GraphQl.Schema do
 
   @desc "Create a new product"
   mutation do
+    @desc "Obtain a JWT"
+    field :login, type: :session do
+      arg(:email, non_null(:string))
+      arg(:password, non_null(:string))
+
+      resolve(&SessionResolver.login/3)
+    end
+
     field :create_product, type: :create_product_response do
       arg(:name, non_null(:string))
       arg(:description, non_null(:string))
