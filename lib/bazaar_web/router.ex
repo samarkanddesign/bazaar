@@ -13,6 +13,11 @@ defmodule BazaarWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  pipeline :graphql do
+    plug(Bazaar.Auth.Pipeline)
+    plug(Bazaar.Context)
+  end
+
   scope "/", BazaarWeb do
     # Use the default browser stack
     pipe_through(:browser)

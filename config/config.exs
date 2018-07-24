@@ -24,6 +24,10 @@ config :logger, :console,
 config :arc,
   storage: Arc.Storage.Local
 
+config :bazaar, Bazaar.Auth.Guardian,
+  issuer: "bazaar",
+  secret_key: "dRBQrBk7K+7RRnvla+IZfTa1Wkynl9mTUNA3M9BBR8FOFjAySPB7ImdQFNoejF/y"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
