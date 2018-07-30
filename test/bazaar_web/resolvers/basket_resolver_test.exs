@@ -6,7 +6,6 @@ defmodule BazaarWeb.BasketResolverTest do
   alias Bazaar.Repo
   alias Bazaar.AbsintheHelpers
   alias Bazaar.Basket
-  alias Bazaar.GraphQl.Resolvers.BasketResolver
 
   describe "Basker Resolver" do
     test "creating a new basket", context do
@@ -32,23 +31,8 @@ defmodule BazaarWeb.BasketResolverTest do
       product = insert(:product)
       basket = insert(:basket)
 
-      mutation =
-        """
-        mutation {
-          addProductToBasket(basketId:"#{basket.id}", productId:#{product.id}, quantity:1) {
-            id
-            items {
-              id
-            }
-          }
-        }
-        """
-        |> AbsintheHelpers.mutation_skeleton()
-
-      res =
-        context.conn
-        |> post("/graphql", mutation)
-        |> json_response(200)
+      mutation = add_to_basket_mutation(basket.id, product.id)
+      res = make_mutation(context.conn, mutation)
 
       assert res["data"]["addProductToBasket"]["items"] |> Enum.count() == 1
       assert basket |> Repo.preload(:basket_items) |> Map.get(:basket_items) |> Enum.count() == 1
@@ -57,23 +41,8 @@ defmodule BazaarWeb.BasketResolverTest do
     test "adding a product to a non-existent basket", context do
       product = insert(:product)
 
-      mutation =
-        """
-        mutation {
-          addProductToBasket(basketId:"#{Ecto.UUID.generate()}", productId:#{product.id}, quantity:1) {
-            id
-            items {
-              id
-            }
-          }
-        }
-        """
-        |> AbsintheHelpers.mutation_skeleton()
-
-      res =
-        context.conn
-        |> post("/graphql", mutation)
-        |> json_response(200)
+      mutation = add_to_basket_mutation(Ecto.UUID.generate(), product.id)
+      res = make_mutation(context.conn, mutation)
 
       error_message = List.first(res["errors"])["message"]
       assert error_message == "basket does not exist"
@@ -84,23 +53,9 @@ defmodule BazaarWeb.BasketResolverTest do
 
       product = insert(:product)
 
-      mutation =
-        """
-        mutation {
-          addProductToBasket(basketId:"#{basket_item.basket_id}", productId:#{product.id}, quantity:1) {
-            id
-            items {
-              id
-            }
-          }
-        }
-        """
-        |> AbsintheHelpers.mutation_skeleton()
+      mutation = add_to_basket_mutation(basket_item.basket_id, product.id)
 
-      res =
-        context.conn
-        |> post("/graphql", mutation)
-        |> json_response(200)
+      res = make_mutation(context.conn, mutation)
 
       assert res["data"]["addProductToBasket"]["items"] |> Enum.count() == 2
 
@@ -109,57 +64,70 @@ defmodule BazaarWeb.BasketResolverTest do
              |> Map.get(:basket_items)
              |> Enum.count() == 2
     end
+
+    test "Adding a non-existant product to a basket", context do
+      basket = insert(:basket)
+      mutation = add_to_basket_mutation(basket.id, 9999)
+
+      res = make_mutation(context.conn, mutation)
+
+      assert List.first(res["errors"])["message"]
+             |> String.contains?("Cannot add product to basket")
+    end
+
+    test "Adding more items to basket than are in stock", context do
+      product = insert(:product, %{stock_qty: 2})
+      basket = insert(:basket)
+
+      mutation = add_to_basket_mutation(basket.id, product.id, 3)
+
+      res = make_mutation(context.conn, mutation)
+
+      assert List.first(res["errors"])["message"] ==
+               "There is not enough stock to add this to the basket"
+    end
+
+    test "Removing a product from the basket that is in the basket", context do
+      basket_item = insert(:basket_item) |> Repo.preload(:basket)
+
+      mutation = remove_item_from_basket(basket_item.basket_id, basket_item.id)
+
+      make_mutation(context.conn, mutation)
+
+      assert basket_item.basket |> get_basket_items |> Enum.count() == 0
+    end
   end
 
-  test "Adding a non-existant product to a basket" do
-    {status, message} =
-      BasketResolver.add_item_to_basket(
-        "",
-        %{product_id: 99, quantity: 1, basket_id: "abc1234"},
-        ""
-      )
-
-    assert status == :error
-    assert String.contains?(message, "Cannot add product to basket")
+  defp add_to_basket_mutation(basket_id, product_id, quantity \\ 1) do
+    """
+    mutation {
+      addProductToBasket(basketId:"#{basket_id}", productId:#{product_id}, quantity:#{quantity}) {
+        id
+        items {
+          id
+        }
+      }
+    }
+    """
   end
 
-  test "Adding more items to basket than are in stock" do
-    product = insert(:product, %{stock_qty: 2})
-    basket = insert(:basket)
-
-    {status, message} =
-      BasketResolver.add_item_to_basket(
-        "",
-        %{
-          product_id: product.id,
-          quantity: 3,
-          basket_id: basket.id
-        },
-        ""
-      )
-
-    assert status == :error
-    assert message == "There is not enough stock to add this to the basket"
-  end
-
-  test "Removing a product from the basket that is in the basket" do
-    basket_item = insert(:basket_item) |> Repo.preload(:basket)
-
-    {status, basket} =
-      BasketResolver.remove_item_from_basket(
-        "",
-        %{
-          basket_id: basket_item.basket_id,
-          item_id: basket_item.id
-        },
-        ""
-      )
-
-    assert status == :ok
-    assert basket |> get_basket_items |> Enum.count() == 0
+  defp remove_item_from_basket(basket_id, item_id) do
+    """
+    mutation {
+      removeProductFromBasket(basketId:"#{basket_id}", itemId:#{item_id}) {
+        id
+      }
+    }
+    """
   end
 
   defp get_basket_items(basket) do
     basket |> Repo.preload(:basket_items) |> Map.get(:basket_items)
+  end
+
+  defp make_mutation(conn, mutation) do
+    conn
+    |> post("/graphql", mutation |> AbsintheHelpers.mutation_skeleton())
+    |> json_response(200)
   end
 end
