@@ -41,7 +41,11 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
     {:error, "An 'id' or 'slug' argument must be provided"}
   end
 
-  def create(_root, args, _info) do
+  def create(_root, _args, %{context: %{current_user: nil}}) do
+    {:error, "Unauthorized"}
+  end
+
+  def create(_root, args, %{context: %{current_user: _user}}) do
     Product.changeset(%Product{}, args)
     |> Repo.insert()
   end

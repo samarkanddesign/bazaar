@@ -4,11 +4,8 @@ defmodule Bazaar.Context do
   def init(opts), do: opts
 
   def call(conn, _) do
-    u = Guardian.Plug.current_resource(conn)
-    IO.inspect(u)
-
     case Guardian.Plug.current_resource(conn) do
-      nil -> Absinthe.Plug.put_options(conn, context: %{})
+      nil -> Absinthe.Plug.put_options(conn, context: %{current_user: nil})
       user -> Absinthe.Plug.put_options(conn, context: %{current_user: user})
     end
   end

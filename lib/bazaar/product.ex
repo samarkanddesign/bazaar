@@ -46,7 +46,7 @@ defmodule Bazaar.Product do
       :featured,
       :listed
     ])
-    |> validate_required([:name, :description, :slug, :sku, :price, :featured])
+    |> validate_required([:name, :description, :slug, :sku, :price])
     |> unique_constraint(:name)
     |> unique_constraint(:slug)
     |> unique_constraint(:sku)

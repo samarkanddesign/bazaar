@@ -31,6 +31,8 @@ defmodule BazaarWeb.Router do
   end
 
   scope "/" do
+    pipe_through(:graphql)
+
     forward(
       "/graphiql",
       Absinthe.Plug.GraphiQL,
