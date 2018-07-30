@@ -41,10 +41,6 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
     {:error, "An 'id' or 'slug' argument must be provided"}
   end
 
-  def cart_products(_root, %{ids: ids}, _info) do
-    {:ok, Product |> where([p], p.id in ^ids) |> Repo.all()}
-  end
-
   def create(_root, args, _info) do
     Product.changeset(%Product{}, args)
     |> Repo.insert()

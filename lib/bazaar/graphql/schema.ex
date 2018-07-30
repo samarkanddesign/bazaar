@@ -57,17 +57,17 @@ defmodule Bazaar.GraphQl.Schema do
   end
 
   object :create_product_response do
-    field(:product, :product)
-    field(:errors, list_of(:error))
+    field(:entity, :product)
+    field(:validation, list_of(:validation))
   end
 
   object :update_product_response do
-    field(:product, :product)
-    field(:errors, list_of(:error))
+    field(:entity, :product)
+    field(:validation, list_of(:validation))
   end
 
   @desc "A validation error"
-  object :error do
+  object :validation do
     field(:key, non_null(:string))
     field(:reason, non_null(:string))
   end
@@ -103,6 +103,11 @@ defmodule Bazaar.GraphQl.Schema do
     field(:user, non_null(:user))
   end
 
+  object :register_response do
+    field(:entity, :session)
+    field(:validation, list_of(:validation))
+  end
+
   query do
     @desc "Get a paginated list of products"
     field(:product_list, :paged_products) do
@@ -115,11 +120,6 @@ defmodule Bazaar.GraphQl.Schema do
       arg(:id, :id)
       arg(:slug, :string)
       resolve(&ProductResolver.get/3)
-    end
-
-    field(:cart_products, non_null(list_of(non_null(:product)))) do
-      arg(:ids, non_null(list_of(non_null(:id))))
-      resolve(&ProductResolver.cart_products/3)
     end
 
     @desc "Get all categories"
@@ -150,6 +150,15 @@ defmodule Bazaar.GraphQl.Schema do
       arg(:password, non_null(:string))
 
       resolve(&SessionResolver.login/3)
+    end
+
+    @desc "Register a new user and login"
+    field :register, type: :register_response do
+      arg(:name, non_null(:string))
+      arg(:email, non_null(:string))
+      arg(:password, non_null(:string))
+
+      resolve(handle_errors(&SessionResolver.register/3))
     end
 
     field :create_product, type: :create_product_response do
@@ -213,7 +222,7 @@ defmodule Bazaar.GraphQl.Schema do
     fn source, args, info ->
       case Absinthe.Resolution.call(fun, source, args, info) do
         {:error, %Ecto.Changeset{} = changeset} -> format_changeset(changeset)
-        {:ok, product} -> {:ok, %{product: product}}
+        {:ok, entity} -> {:ok, %{entity: entity}}
         val -> val
       end
     end
@@ -224,6 +233,6 @@ defmodule Bazaar.GraphQl.Schema do
       changeset.errors
       |> Enum.map(fn {key, {value, _context}} -> %{key: key, reason: value} end)
 
-    {:ok, %{errors: errors}}
+    {:ok, %{validation: errors}}
   end
 end
