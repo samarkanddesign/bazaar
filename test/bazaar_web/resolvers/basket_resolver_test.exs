@@ -1,52 +1,114 @@
 defmodule BazaarWeb.BasketResolverTest do
   use BazaarWeb.ConnCase
-  alias Bazaar.Repo
+
   import Bazaar.Factory
+
+  alias Bazaar.Repo
+  alias Bazaar.AbsintheHelpers
+  alias Bazaar.Basket
   alias Bazaar.GraphQl.Resolvers.BasketResolver
 
-  test "Adding a product to an empty basket" do
-    product = insert(:product)
-    basket = insert(:basket)
+  describe "Basker Resolver" do
+    test "creating a new basket", context do
+      mutation =
+        """
+          mutation {
+            createBasket {
+              id
+            }
+          }
+        """
+        |> AbsintheHelpers.mutation_skeleton()
 
-    {status, basket} =
-      BasketResolver.add_item_to_basket(
-        "",
-        %{product_id: product.id, quantity: 1, basket_id: basket.id},
-        ""
-      )
+      res =
+        context.conn
+        |> post("/graphql", mutation)
+        |> json_response(200)
 
-    assert status == :ok
-    assert basket |> Repo.preload(:basket_items) |> Map.get(:basket_items) |> Enum.count() == 1
-  end
+      assert res["data"]["createBasket"]["id"] |> String.slice(13..14) == "-4"
+    end
 
-  test "Adding a product to a non-existent basket" do
-    product = insert(:product)
+    test "adding a product to an empty basket", context do
+      product = insert(:product)
+      basket = insert(:basket)
 
-    {status, response} =
-      BasketResolver.add_item_to_basket(
-        "",
-        %{product_id: product.id, quantity: 1, basket_id: Ecto.UUID.generate()},
-        ""
-      )
+      mutation =
+        """
+        mutation {
+          addProductToBasket(basketId:"#{basket.id}", productId:#{product.id}, quantity:1) {
+            id
+            items {
+              id
+            }
+          }
+        }
+        """
+        |> AbsintheHelpers.mutation_skeleton()
 
-    assert status == :error
-    assert response == "basket does not exist"
-  end
+      res =
+        context.conn
+        |> post("/graphql", mutation)
+        |> json_response(200)
 
-  test "Adding a product to a basket that already contains a different product" do
-    basket_item = insert(:basket_item)
+      assert res["data"]["addProductToBasket"]["items"] |> Enum.count() == 1
+      assert basket |> Repo.preload(:basket_items) |> Map.get(:basket_items) |> Enum.count() == 1
+    end
 
-    product = insert(:product)
+    test "adding a product to a non-existent basket", context do
+      product = insert(:product)
 
-    {status, basket} =
-      BasketResolver.add_item_to_basket(
-        "",
-        %{product_id: product.id, quantity: 1, basket_id: basket_item.basket_id},
-        ""
-      )
+      mutation =
+        """
+        mutation {
+          addProductToBasket(basketId:"#{Ecto.UUID.generate()}", productId:#{product.id}, quantity:1) {
+            id
+            items {
+              id
+            }
+          }
+        }
+        """
+        |> AbsintheHelpers.mutation_skeleton()
 
-    assert status == :ok
-    assert basket |> Repo.preload(:basket_items) |> Map.get(:basket_items) |> Enum.count() == 2
+      res =
+        context.conn
+        |> post("/graphql", mutation)
+        |> json_response(200)
+
+      error_message = List.first(res["errors"])["message"]
+      assert error_message == "basket does not exist"
+    end
+
+    test "Adding a product to a basket that already contains a different product", context do
+      basket_item = insert(:basket_item)
+
+      product = insert(:product)
+
+      mutation =
+        """
+        mutation {
+          addProductToBasket(basketId:"#{basket_item.basket_id}", productId:#{product.id}, quantity:1) {
+            id
+            items {
+              id
+            }
+          }
+        }
+        """
+        |> AbsintheHelpers.mutation_skeleton()
+
+      res =
+        context.conn
+        |> post("/graphql", mutation)
+        |> json_response(200)
+
+      assert res["data"]["addProductToBasket"]["items"] |> Enum.count() == 2
+
+      assert Repo.get(Basket, basket_item.basket_id)
+             |> Repo.preload(:basket_items)
+             |> Map.get(:basket_items)
+             |> Enum.count() == 2
+    end
   end
 
   test "Adding a non-existant product to a basket" do

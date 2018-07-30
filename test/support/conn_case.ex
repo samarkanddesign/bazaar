@@ -26,13 +26,18 @@ defmodule BazaarWeb.ConnCase do
     end
   end
 
-
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Bazaar.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Bazaar.Repo, {:shared, self()})
     end
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
-  end
 
+    conn =
+      Phoenix.ConnTest.build_conn()
+      # |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")
+      |> Plug.Conn.put_req_header("content-type", "application/json")
+
+    {:ok, conn: conn}
+  end
 end
