@@ -14,4 +14,8 @@ defmodule Bazaar.AbsintheHelpers do
       "variables" => "{}"
     }
   end
+
+  def first_error(res) do
+    List.first(res["errors"])["message"]
+  end
 end

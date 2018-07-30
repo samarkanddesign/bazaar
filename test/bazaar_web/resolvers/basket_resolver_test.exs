@@ -71,7 +71,7 @@ defmodule BazaarWeb.BasketResolverTest do
 
       res = make_mutation(context.conn, mutation)
 
-      assert List.first(res["errors"])["message"]
+      assert AbsintheHelpers.first_error(res)
              |> String.contains?("Cannot add product to basket")
     end
 
@@ -83,7 +83,7 @@ defmodule BazaarWeb.BasketResolverTest do
 
       res = make_mutation(context.conn, mutation)
 
-      assert List.first(res["errors"])["message"] ==
+      assert AbsintheHelpers.first_error(res) ==
                "There is not enough stock to add this to the basket"
     end
 

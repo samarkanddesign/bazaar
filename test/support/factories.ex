@@ -1,6 +1,16 @@
 defmodule Bazaar.Factory do
   use ExMachina.Ecto, repo: Bazaar.Repo
 
+  def user_factory do
+    name = sequence(:name, &"user-#{&1}")
+
+    %Bazaar.User{
+      name: name,
+      email: "#{name}@example.com",
+      password_hash: "$2b$12$CPX7zOfxY9ZfChhZtVP/..fivU/3rMHIMfyWaA7j5FU0acoyZ/xb6"
+    }
+  end
+
   def product_factory do
     name = sequence(:name, &"product-#{&1}")
 
