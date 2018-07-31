@@ -41,16 +41,16 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
     {:error, "An 'id' or 'slug' argument must be provided"}
   end
 
-  def create(_root, _args, %{context: %{current_user: nil}}) do
-    {:error, "Unauthorized"}
-  end
-
-  def create(_root, args, %{context: %{current_user: _user}}) do
-    Product.changeset(%Product{}, args)
+  def create(_root, args, %{context: %{current_user: user, admin: true}}) do
+    Product.changeset(%Product{user_id: user.id}, args)
     |> Repo.insert()
   end
 
-  def update(_root, args, _info) do
+  def create(_root, _args, _context) do
+    {:error, "Unauthorized"}
+  end
+
+  def update(_root, args, %{context: %{admin: true}}) do
     case Repo.get_by(Product, %{id: args.id}) do
       nil ->
         {:error, "Product does not exist"}
@@ -60,6 +60,10 @@ defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
         |> Product.changeset(args)
         |> Repo.update()
     end
+  end
+
+  def update(_root, _args, _context) do
+    {:error, "Unauthorized"}
   end
 
   def product_images(_root, _args, %{source: product}) do

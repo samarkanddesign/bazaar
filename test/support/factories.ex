@@ -11,6 +11,19 @@ defmodule Bazaar.Factory do
     }
   end
 
+  def make_admin(user) do
+    role = insert(:role, %{slug: "admin", name: "Admin"})
+    %{user | role_id: role.id}
+  end
+
+  def role_factory do
+    %Bazaar.Role{
+      slug: sequence(:slug, &"role-#{&1}"),
+      name: sequence(:name, &"Role-#{&1}"),
+      description: "A role"
+    }
+  end
+
   def product_factory do
     name = sequence(:name, &"product-#{&1}")
 
