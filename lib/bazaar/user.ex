@@ -10,6 +10,7 @@ defmodule Bazaar.User do
 
     belongs_to(:role, Bazaar.Role)
     has_many(:products, Bazaar.Product)
+    has_many(:addresses, Bazaar.Address)
     timestamps()
   end
 
