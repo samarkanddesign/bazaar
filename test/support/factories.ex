@@ -51,4 +51,15 @@ defmodule Bazaar.Factory do
       quantity: 1
     }
   end
+
+  def address_factory do
+    %Bazaar.Address{
+      user: build(:user),
+      phone: "+441234555666",
+      city: "London",
+      line_1: "1 Nice Street",
+      postcode: "SW1A 1AA",
+      country: "GB"
+    }
+  end
 end
