@@ -51,4 +51,12 @@ defmodule Bazaar.Product do
     |> unique_constraint(:slug)
     |> unique_constraint(:sku)
   end
+
+  def payable_price(%Bazaar.Product{sale_price: nil, price: price}) do
+    price
+  end
+
+  def payable_price(%Bazaar.Product{sale_price: sale_price}) do
+    sale_price
+  end
 end

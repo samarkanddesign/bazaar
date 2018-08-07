@@ -21,5 +21,9 @@ defmodule Bazaar.Order do
       :shipping_address_id,
       :billing_address_id
     ])
+    |> validate_required([
+      :shipping_address_id,
+      :billing_address_id
+    ])
   end
 end

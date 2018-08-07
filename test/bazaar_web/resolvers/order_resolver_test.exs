@@ -9,8 +9,9 @@ defmodule BazaarWeb.OrderResolverTest do
   describe "Order resolver" do
     test "placing a new order", context do
       %{id: address_id, user: user} = insert(:address) |> Repo.preload(:user)
+      product = insert(:product, %{sale_price: 3})
 
-      %{basket: basket} = insert(:basket_item) |> Repo.preload(:basket)
+      %{basket: basket} = insert(:basket_item, %{product: product}) |> Repo.preload(:basket)
       {:ok, jwt, _claims} = Bazaar.Auth.Guardian.encode_and_sign(user)
 
       mutation = """
@@ -42,7 +43,7 @@ defmodule BazaarWeb.OrderResolverTest do
           mutation
         )
 
-      assert res["data"]["placeOrder"]["order"]["total"] > 1
+      assert res["data"]["placeOrder"]["order"]["total"] == 3
       assert res["data"]["placeOrder"]["status"] == "ok"
     end
   end
