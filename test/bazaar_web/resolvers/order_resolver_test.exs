@@ -9,7 +9,7 @@ defmodule BazaarWeb.OrderResolverTest do
   describe "Order resolver" do
     test "placing a new order", context do
       %{id: address_id, user: user} = insert(:address) |> Repo.preload(:user)
-      product = insert(:product, %{sale_price: 3})
+      product = insert(:product, %{sale_price: 3, stock_qty: 10})
 
       %{basket: basket} =
         insert(:basket_item, %{product: product, quantity: 2}) |> Repo.preload(:basket)
@@ -47,6 +47,7 @@ defmodule BazaarWeb.OrderResolverTest do
 
       assert res["data"]["placeOrder"]["order"]["total"] == 6
       assert res["data"]["placeOrder"]["status"] == "ok"
+      assert Map.get(Repo.get(Bazaar.Product, product.id), :stock_qty) == 8
     end
   end
 

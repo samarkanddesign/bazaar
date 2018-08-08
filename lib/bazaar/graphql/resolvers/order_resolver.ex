@@ -20,8 +20,12 @@ defmodule Bazaar.GraphQl.Resolvers.OrderResolver do
                }
              )
              |> Repo.insert() do
-          {:ok, order} -> {:ok, %{status: "ok", order: order}}
-          err -> err
+          {:ok, order} ->
+            Task.start(Bazaar.Services.StockKeeper, :update_stock, [order])
+            {:ok, %{status: "ok", order: order}}
+
+          err ->
+            err
         end
 
       _ ->
