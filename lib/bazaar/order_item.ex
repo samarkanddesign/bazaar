@@ -5,6 +5,7 @@ defmodule Bazaar.OrderItem do
   schema "order_items" do
     field(:description, :string)
     field(:price_paid, :integer)
+    field(:quantity, :integer)
 
     belongs_to(:order, Bazaar.Order)
     belongs_to(:product, Bazaar.Product)

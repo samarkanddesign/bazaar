@@ -9,6 +9,8 @@ config :bazaar, BazaarWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
+config :bcrypt_elixir, log_rounds: 4
+
 # Configure your database
 config :bazaar, Bazaar.Repo,
   adapter: Ecto.Adapters.MySQL,

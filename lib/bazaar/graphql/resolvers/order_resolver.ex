@@ -39,7 +39,8 @@ defmodule Bazaar.GraphQl.Resolvers.OrderResolver do
       %OrderItem{
         product_id: item.product_id,
         price_paid: Bazaar.Product.payable_price(item.product),
-        description: item.product.name
+        description: item.product.name,
+        quantity: item.quantity
       }
     end)
   end

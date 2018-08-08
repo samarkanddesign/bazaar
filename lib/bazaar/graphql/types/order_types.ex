@@ -40,6 +40,9 @@ defmodule Bazaar.Schema.OrderTypes do
   end
 
   defp calc_order_total(_root, _args, %{source: %Bazaar.Order{order_items: items}}) do
-    {:ok, Enum.reduce(items, 0, fn %{price_paid: amount}, total -> total + amount end)}
+    {:ok,
+     Enum.reduce(items, 0, fn %{price_paid: amount, quantity: quantity}, total ->
+       total + amount * quantity
+     end)}
   end
 end
