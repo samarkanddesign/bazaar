@@ -92,5 +92,6 @@ defmodule Bazaar.GraphQl.Schema do
     import_fields(:product_mutations)
     import_fields(:basket_mutations)
     import_fields(:order_mutations)
+    import_fields(:address_mutations)
   end
 end
