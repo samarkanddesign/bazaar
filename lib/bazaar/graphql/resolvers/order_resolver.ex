@@ -24,8 +24,8 @@ defmodule Bazaar.GraphQl.Resolvers.OrderResolver do
             Task.start(Bazaar.Services.StockKeeper, :update_stock, [order])
             {:ok, %{status: "ok", order: order}}
 
-          err ->
-            err
+          _ ->
+            {:error, "Invalid arguments. Address probably does not exist"}
         end
 
       _ ->

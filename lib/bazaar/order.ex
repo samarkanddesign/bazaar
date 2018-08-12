@@ -7,8 +7,8 @@ defmodule Bazaar.Order do
     field(:status, :string)
 
     has_many(:order_items, Bazaar.OrderItem)
-    belongs_to(:shipping_address, Bazaar.Address)
-    belongs_to(:billing_address, Bazaar.Address)
+    belongs_to(:shipping_address, Bazaar.Address, type: :binary_id)
+    belongs_to(:billing_address, Bazaar.Address, type: :binary_id)
     belongs_to(:user, Bazaar.User)
 
     timestamps()
@@ -25,5 +25,7 @@ defmodule Bazaar.Order do
       :shipping_address_id,
       :billing_address_id
     ])
+    |> foreign_key_constraint(:shipping_address_id)
+    |> foreign_key_constraint(:billing_address_id)
   end
 end

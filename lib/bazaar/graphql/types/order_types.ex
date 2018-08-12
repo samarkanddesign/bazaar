@@ -29,11 +29,16 @@ defmodule Bazaar.Schema.OrderTypes do
     )
   end
 
+  object :place_order_response do
+    field(:status, :string)
+    field(:order, :order)
+  end
+
   object :order_mutations do
-    field(:place_order, type: :place_order_response) do
+    field(:place_order, type: non_null(:place_order_response)) do
       arg(:basket_id, non_null(:uuid))
-      arg(:shipping_address_id, non_null(:integer))
-      arg(:billing_address_id, non_null(:integer))
+      arg(:shipping_address_id, non_null(:uuid))
+      arg(:billing_address_id, non_null(:uuid))
 
       resolve(&OrderResolver.place_order/3)
     end

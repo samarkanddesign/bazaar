@@ -4,8 +4,8 @@ defmodule Bazaar.Repo.Migrations.CreateOrders do
   def change do
     create table("orders") do
       add(:user_id, references(:users))
-      add(:shipping_address_id, references(:addresses))
-      add(:billing_address_id, references(:addresses))
+      add(:shipping_address_id, references(:addresses, type: :uuid))
+      add(:billing_address_id, references(:addresses, type: :uuid))
       add(:status, :string)
       add(:note, :string)
       add(:payment_id, :string)

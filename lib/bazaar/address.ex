@@ -2,12 +2,14 @@ defmodule Bazaar.Address do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+
   schema "addresses" do
     field(:name, :string)
     field(:phone, :string)
-    field(:line_1, :string)
-    field(:line_2, :string)
-    field(:line_3, :string)
+    field(:line1, :string)
+    field(:line2, :string)
+    field(:line3, :string)
     field(:city, :string)
     field(:postcode, :string)
     field(:country, :string)
@@ -20,7 +22,7 @@ defmodule Bazaar.Address do
   @doc false
   def changeset(category, attrs) do
     category
-    |> cast(attrs, [:name, :phone, :line_1, :line_2, :line_3, :city, :country, :postcode])
+    |> cast(attrs, [:name, :phone, :line1, :line2, :line3, :city, :country, :postcode])
     |> validate_required([:name, :line_1, :city, :country, :postcode])
   end
 end

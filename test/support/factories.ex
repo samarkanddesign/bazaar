@@ -57,7 +57,7 @@ defmodule Bazaar.Factory do
       user: build(:user),
       phone: "+441234555666",
       city: "London",
-      line_1: "1 Nice Street",
+      line1: "1 Nice Street",
       postcode: "SW1A 1AA",
       country: "GB"
     }

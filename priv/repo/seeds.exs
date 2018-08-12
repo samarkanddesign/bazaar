@@ -42,6 +42,22 @@ admin_user =
     role_id: admin_role.id
   })
 
+normal_user =
+  Repo.insert!(%Bazaar.User{
+    name: "Foo",
+    email: "foo@example.com",
+    password_hash: Comeonin.Bcrypt.hashpwsalt("secret")
+  })
+
+Repo.insert!(%Bazaar.Address{
+  user_id: normal_user.id,
+  phone: "+441234555666",
+  city: "London",
+  line1: "1 Nice Street",
+  postcode: "SW1A 1AA",
+  country: "GB"
+})
+
 categories =
   Enum.map(["Furnishings", "Lampshades", "Accessories"], fn cat ->
     Bazaar.Repo.insert!(%Bazaar.Category{

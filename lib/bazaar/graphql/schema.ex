@@ -10,6 +10,7 @@ defmodule Bazaar.GraphQl.Schema do
   import_types(Bazaar.Schema.ProductTypes)
   import_types(Bazaar.Schema.BasketTypes)
   import_types(Bazaar.Schema.OrderTypes)
+  import_types(Bazaar.Schema.AddressTypes)
 
   object :user do
     field(:id, non_null(:id))
@@ -25,18 +26,6 @@ defmodule Bazaar.GraphQl.Schema do
     field(:order, non_null(:integer))
 
     field(:products, non_null(list_of(non_null(:product))), resolve: assoc(:products))
-  end
-
-  object :address do
-    field(:id, non_null(:id))
-    field(:name, :string)
-    field(:phone, :string)
-    field(:line_1, :string)
-    field(:line_2, :string)
-    field(:line_3, :string)
-    field(:city, non_null(:string))
-    field(:postcode, non_null(:string))
-    field(:country, non_null(:string))
   end
 
   @desc "A validation error"
@@ -63,14 +52,10 @@ defmodule Bazaar.GraphQl.Schema do
     field(:validation, list_of(:validation))
   end
 
-  object :place_order_response do
-    field(:status, :string)
-    field(:order, :order)
-  end
-
   query do
     import_fields(:basket_queries)
     import_fields(:product_queries)
+    import_fields(:address_queries)
 
     @desc "Get all categories"
     field(:categories, non_null(list_of(non_null(:category)))) do
