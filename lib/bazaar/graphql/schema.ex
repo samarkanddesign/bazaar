@@ -4,6 +4,7 @@ defmodule Bazaar.GraphQl.Schema do
 
   alias Bazaar.GraphQl.Resolvers.CategoryResolver
   alias Bazaar.GraphQl.Resolvers.SessionResolver
+  alias Bazaar.GraphQl.Resolvers.PaymentResolver
 
   query do
     import_fields(:basket_queries)
@@ -21,9 +22,13 @@ defmodule Bazaar.GraphQl.Schema do
       arg(:slug, :string)
       resolve(&CategoryResolver.get/3)
     end
+
+    @desc "Get the saved cards for the current user"
+    field(:cards, non_null(list_of(non_null(:card)))) do
+      resolve(&PaymentResolver.cards/3)
+    end
   end
 
-  @desc "Create a new product"
   mutation do
     @desc "Obtain a JWT"
     field :login, type: :session do
@@ -42,6 +47,11 @@ defmodule Bazaar.GraphQl.Schema do
       resolve(Bazaar.GraphQl.Utils.handle_errors(&SessionResolver.register/3))
     end
 
+    field :save_card, type: :save_card_response do
+      arg(:token, non_null(:string))
+      resolve(&PaymentResolver.save_card/3)
+    end
+
     import_fields(:product_mutations)
     import_fields(:basket_mutations)
     import_fields(:order_mutations)
@@ -54,6 +64,25 @@ defmodule Bazaar.GraphQl.Schema do
   import_types(Bazaar.Schema.BasketTypes)
   import_types(Bazaar.Schema.OrderTypes)
   import_types(Bazaar.Schema.AddressTypes)
+
+  object :card do
+    field(:id, non_null(:id))
+    field(:brand, non_null(:string))
+    field(:funding, non_null(:string))
+    field(:last_four, non_null(:string))
+<<<<<<< HEAD
+    field(:exp_month, non_null(:string))
+    field(:exp_year, non_null(:string))
+  end
+
+  object :save_card_response do
+    field(:cards, list_of(non_null(:card)))
+    field(:error, :string)
+=======
+    field(:exp_month, non_null(:integer))
+    field(:exp_year, non_null(:integer))
+>>>>>>> Add save card resolver for multiple cards
+  end
 
   object :user do
     field(:id, non_null(:id))

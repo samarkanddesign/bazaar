@@ -52,7 +52,8 @@ defmodule Bazaar.Mixfile do
       {:ex_machina, "~> 2.2", only: :test},
       {:guardian, "~> 1.0"},
       {:comeonin, "~> 4.0"},
-      {:bcrypt_elixir, "~> 1.0"}
+      {:bcrypt_elixir, "~> 1.0"},
+      {:stripity_stripe, "~> 2.0"}
     ]
   end
 

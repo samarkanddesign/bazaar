@@ -24,6 +24,8 @@ config :logger, :console,
 config :arc,
   storage: Arc.Storage.Local
 
+config :stripity_stripe, api_key: System.get_env("STRIPE_SECRET")
+
 config :bazaar, Bazaar.Auth.Guardian,
   issuer: "bazaar",
   secret_key: "dRBQrBk7K+7RRnvla+IZfTa1Wkynl9mTUNA3M9BBR8FOFjAySPB7ImdQFNoejF/y"

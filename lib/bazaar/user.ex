@@ -7,6 +7,7 @@ defmodule Bazaar.User do
     field(:name, :string)
     field(:password, :string, virtual: true)
     field(:password_hash, :string)
+    field(:billing_token, :string)
 
     belongs_to(:role, Bazaar.Role)
     has_many(:products, Bazaar.Product)
@@ -17,7 +18,7 @@ defmodule Bazaar.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :email])
+    |> cast(attrs, [:name, :email, :billing_token])
   end
 
   def registration_changeset(model, params \\ %{}) do
