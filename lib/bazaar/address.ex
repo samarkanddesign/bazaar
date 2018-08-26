@@ -24,5 +24,6 @@ defmodule Bazaar.Address do
     category
     |> cast(attrs, [:name, :phone, :line1, :line2, :line3, :city, :country, :postcode])
     |> validate_required([:name, :line1, :city, :country, :postcode])
+    |> validate_length(:country, is: 2)
   end
 end
