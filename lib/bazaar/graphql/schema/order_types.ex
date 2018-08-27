@@ -17,7 +17,6 @@ defmodule Bazaar.Schema.OrderTypes do
     field(:status, non_null(:string))
     field(:note, :string)
     field(:shipping_address, non_null(:address), resolve: assoc(:shipping_address))
-    field(:billing_address, non_null(:address), resolve: assoc(:billing_address))
     field(:items, non_null(list_of(:order_item)), resolve: assoc(:order_items))
     field(:user, non_null(:user), resolve: assoc(:user))
     field(:total, non_null(:integer), resolve: &calc_order_total/3)

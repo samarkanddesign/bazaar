@@ -5,6 +5,7 @@ defmodule Bazaar.Order do
   schema "orders" do
     field(:note, :string)
     field(:status, :string)
+    field(:payment_id, :string)
 
     has_many(:order_items, Bazaar.OrderItem)
     belongs_to(:shipping_address, Bazaar.Address, type: :binary_id)
@@ -19,11 +20,11 @@ defmodule Bazaar.Order do
     order
     |> cast(attrs, [
       :shipping_address_id,
-      :billing_address_id
+      :status,
+      :payment_id
     ])
     |> validate_required([
-      :shipping_address_id,
-      :billing_address_id
+      :shipping_address_id
     ])
     |> foreign_key_constraint(:shipping_address_id)
     |> foreign_key_constraint(:billing_address_id)
