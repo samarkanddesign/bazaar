@@ -42,12 +42,12 @@ defmodule Bazaar.Schema.ProductTypes do
 
   object :create_product_response do
     field(:entity, :product)
-    field(:validation, list_of(:validation))
+    field(:validation, list_of(non_null(:validation)))
   end
 
   object :update_product_response do
     field(:entity, :product)
-    field(:validation, list_of(:validation))
+    field(:validation, list_of(non_null(:validation)))
   end
 
   object :paged_products do
@@ -59,6 +59,7 @@ defmodule Bazaar.Schema.ProductTypes do
     @desc "Get a paginated list of products"
     field(:product_list, :paged_products) do
       arg(:page, :integer)
+      arg(:page_size, :integer)
       resolve(&ProductResolver.all/3)
     end
 

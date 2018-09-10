@@ -16,7 +16,9 @@ defmodule Bazaar.GraphQl.Utils do
   def format_changeset(changeset) do
     errors =
       changeset.errors
-      |> Enum.map(fn {key, {value, _context}} -> %{key: key, reason: value} end)
+      |> Enum.map(fn {key, error} ->
+        %{key: key, reason: BazaarWeb.ErrorHelpers.translate_error(error)}
+      end)
 
     {:ok, %{validation: errors}}
   end

@@ -49,7 +49,7 @@ defmodule Bazaar.GraphQl.Schema do
 
   object :register_response do
     field(:entity, :session)
-    field(:validation, list_of(:validation))
+    field(:validation, non_null(list_of(non_null(:validation))))
   end
 
   query do

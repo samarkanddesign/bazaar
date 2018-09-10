@@ -25,7 +25,7 @@ defmodule Bazaar.User do
     |> cast(params, [:password, :name, :email])
     |> sanitize_email
     |> validate_required([:name, :email, :password])
-    |> validate_length(:password, min: 8)
+    |> validate_length(:password, min: 6)
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email, message: "already has an account")
     |> put_password_hash

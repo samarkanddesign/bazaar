@@ -25,7 +25,7 @@ defmodule Bazaar.Schema.AddressTypes do
 
   object :create_address_response do
     field(:entity, :address)
-    field(:validation, list_of(:validation))
+    field(:validation, list_of(non_null(:validation)))
   end
 
   object :address_mutations do
