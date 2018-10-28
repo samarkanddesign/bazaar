@@ -34,7 +34,7 @@ defmodule Bazaar.GraphQl.Resolvers.OrderResolver do
   end
 
   def place_order(_root, _args, _info) do
-    {:error, "Invalid"}
+    {:error, "Not authenticated"}
   end
 
   defp order_items_from_basket_items(items) do

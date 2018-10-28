@@ -36,16 +36,16 @@ admin_role =
 
 admin_user =
   Repo.insert!(%Bazaar.User{
-    name: "Admin",
-    email: "test@samarkanddesign.com",
+    name: "Bazaar Admin",
+    email: "admin@samarkanddesign.com",
     password_hash: Comeonin.Bcrypt.hashpwsalt("secret"),
     role_id: admin_role.id
   })
 
 normal_user =
   Repo.insert!(%Bazaar.User{
-    name: "Foo",
-    email: "foo@example.com",
+    name: "Bazaar User",
+    email: "bazaar@samarkanddesign.com",
     password_hash: Comeonin.Bcrypt.hashpwsalt("secret")
   })
 
@@ -70,7 +70,7 @@ max_cat = Enum.count(categories) - 1
 
 Enum.each(1..15, fn _ ->
   name = Faker.Commerce.product_name()
-  sku = Faker.Lorem.characters(2..4) |> to_string |> String.upcase()
+  sku = Faker.Lorem.characters(3..5) |> to_string |> String.upcase()
   related_cat = Enum.at(categories, Faker.random_between(0, max_cat))
 
   Bazaar.Repo.insert!(%Bazaar.Product{

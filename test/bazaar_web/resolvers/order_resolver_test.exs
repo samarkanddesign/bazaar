@@ -18,9 +18,11 @@ defmodule BazaarWeb.OrderResolverTest do
 
       mutation = """
         mutation {
-          placeOrder(basketId: "#{basket.id}", billingAddressId:#{address_id}, shippingAddressId:#{
-        address_id
-      }) {
+          placeOrder(
+            basketId: "#{basket.id}",
+            billingAddressId: "#{address_id}",
+            shippingAddressId: "#{address_id}"
+          ) {
             status
             order {
               id
@@ -28,7 +30,7 @@ defmodule BazaarWeb.OrderResolverTest do
                 description
               }
               shipping_address {
-                line_1
+                line1
               }
               user {
                 email

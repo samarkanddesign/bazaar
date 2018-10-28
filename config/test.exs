@@ -13,8 +13,8 @@ config :bcrypt_elixir, log_rounds: 4
 
 # Configure your database
 config :bazaar, Bazaar.Repo,
-  adapter: Ecto.Adapters.MySQL,
-  username: "root",
+  adapter: Ecto.Adapters.Postgres,
+  username: "bazaar",
   password: "secret",
   database: "bazaar_test",
   hostname: "localhost",
