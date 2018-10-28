@@ -36,7 +36,7 @@ defmodule Bazaar.Mixfile do
       {:phoenix, "~> 1.3.2"},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 3.2"},
-      {:mariaex, ">= 0.0.0"},
+      {:postgrex, "~> 0.13.3"},
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
@@ -66,7 +66,8 @@ defmodule Bazaar.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      seed: ["run priv/repo/seeds.exs"]
     ]
   end
 end

@@ -1,27 +1,21 @@
 # Elixir CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-elixir/ for more details
 version: 2
 jobs:
   build:
     docker:
       # specify the version here
-      - image: circleci/elixir:1.4
+      - image: circleci/elixir:1.7
         environment:
           MIX_ENV: test
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      - image: circleci/mysql:5.7
+
+      - image: circleci/postgres:9
         environment:
-          MYSQL_ROOT_PASSWORD: secret
+          POSTGRES_PASSWORD: secret
+          POSTGRES_USER: bazaar
 
     working_directory: ~/repo
     steps:
       - checkout
-
-      # specify any bash command here prefixed with `run: `
       - run:
           name: Install hex deps
           command: |
@@ -31,11 +25,11 @@ jobs:
           keys:
             - mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
             - mix-cache-{{ .Branch }}
-            - mix-cache
+            - mix-cache-
       - restore_cache:
           keys:
             - build-cache-{{ .Branch }}
-            - build-cache
+            - build-cache-
       - run: mix do deps.get, compile
       - run: mix ecto.create
       - run: mix test
@@ -43,14 +37,5 @@ jobs:
           key: mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths: "deps"
       - save_cache:
-          key: mix-cache-{{ .Branch }}
-          paths: "deps"
-      - save_cache:
-          key: mix-cache
-          paths: "deps"
-      - save_cache:
           key: build-cache-{{ .Branch }}
-          paths: "_build"
-      - save_cache:
-          key: build-cache
           paths: "_build"

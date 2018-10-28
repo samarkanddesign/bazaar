@@ -49,8 +49,8 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
 config :bazaar, Bazaar.Repo,
-  adapter: Ecto.Adapters.MySQL,
-  username: "root",
+  adapter: Ecto.Adapters.Postgres,
+  username: "bazaar",
   password: "secret",
   database: "bazaar_dev",
   hostname: "localhost",
