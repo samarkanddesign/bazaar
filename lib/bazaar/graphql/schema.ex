@@ -70,18 +70,13 @@ defmodule Bazaar.GraphQl.Schema do
     field(:brand, non_null(:string))
     field(:funding, non_null(:string))
     field(:last_four, non_null(:string))
-<<<<<<< HEAD
-    field(:exp_month, non_null(:string))
-    field(:exp_year, non_null(:string))
+    field(:exp_month, non_null(:integer))
+    field(:exp_year, non_null(:integer))
   end
 
   object :save_card_response do
     field(:cards, list_of(non_null(:card)))
     field(:error, :string)
-=======
-    field(:exp_month, non_null(:integer))
-    field(:exp_year, non_null(:integer))
->>>>>>> Add save card resolver for multiple cards
   end
 
   object :user do

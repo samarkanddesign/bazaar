@@ -20,14 +20,12 @@ defmodule Bazaar.GraphQl.Resolvers.PaymentResolver do
     end
   end
 
-<<<<<<< HEAD
+  def cards(_root, _args, _info), do: {:error, "Unauthorized"}
+
   @doc """
   Save a card for a user that currently does not exist in Stripe
   """
-=======
-  def cards(_root, _args, _info), do: {:error, "Unauthorized"}
 
->>>>>>> Add save card resolver for multiple cards
   def save_card(_root, %{token: token}, %{
         context: %{current_user: %{billing_token: nil, email: email, id: id}}
       }) do

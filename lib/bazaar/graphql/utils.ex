@@ -7,7 +7,7 @@ defmodule Bazaar.GraphQl.Utils do
     fn source, args, info ->
       case Absinthe.Resolution.call(fun, source, args, info) do
         {:error, %Ecto.Changeset{} = changeset} -> format_changeset(changeset)
-        {:ok, entity} -> {:ok, %{entity: entity}}
+        {:ok, entity} -> {:ok, %{entity: entity, validation: []}}
         val -> val
       end
     end
