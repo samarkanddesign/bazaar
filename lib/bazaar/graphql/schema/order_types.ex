@@ -37,8 +37,7 @@ defmodule Bazaar.Schema.OrderTypes do
     field(:place_order, type: non_null(:place_order_response)) do
       arg(:basket_id, non_null(:uuid))
       arg(:shipping_address_id, non_null(:uuid))
-      arg(:billing_address_id, non_null(:uuid))
-      arg(:cardId, non_null(:string))
+      arg(:card_id, non_null(:string))
 
       resolve(&OrderResolver.place_order/3)
     end
