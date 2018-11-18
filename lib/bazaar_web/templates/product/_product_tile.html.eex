@@ -1,0 +1,4 @@
+<div>
+<h3><%= @product.name %></h3>
+<span>£<%= format_price(@product.price) %></span>
+</div>

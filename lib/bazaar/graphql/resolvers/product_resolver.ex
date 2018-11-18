@@ -1,26 +1,9 @@
 defmodule Bazaar.GraphQl.Resolvers.ProductResolver do
-  import Ecto.Query
   alias Bazaar.Product
   alias Bazaar.Repo
 
   def all(_root, args, _info) do
-    page =
-      Product
-      |> order_by(desc: :inserted_at)
-      |> preload(:categories)
-      |> preload(:product_images)
-      |> Repo.paginate(page: Map.get(args, :page, 1), page_size: Map.get(args, :page_size, 12))
-
-    {:ok,
-     %{
-       products: page.entries,
-       pagination: %{
-         page_number: page.page_number,
-         page_size: page.page_size,
-         total_pages: page.total_pages,
-         total_entries: page.total_entries
-       }
-     }}
+    {:ok, Product.list(args)}
   end
 
   def get(_root, %{id: id}, _info) do

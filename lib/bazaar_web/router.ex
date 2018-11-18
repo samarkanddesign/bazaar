@@ -23,6 +23,7 @@ defmodule BazaarWeb.Router do
     pipe_through(:browser)
 
     get("/", PageController, :index)
+    get("/shop", ProductController, :index)
   end
 
   scope "/api", BazaarWeb do

@@ -1,0 +1,6 @@
+<div class="jumbotron">
+  <h2>Shop</h2>
+   <%= for product <- @products.products do %>
+    <%= render "_product_tile.html", product: product, conn: @conn %>
+  <% end %>
+</div>

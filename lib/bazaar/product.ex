@@ -1,6 +1,10 @@
 defmodule Bazaar.Product do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
+
+  alias Bazaar.Repo
+  alias Bazaar.Product
 
   schema "products" do
     field(:name, :string)
@@ -58,5 +62,24 @@ defmodule Bazaar.Product do
 
   def payable_price(%Bazaar.Product{sale_price: sale_price}) do
     sale_price
+  end
+
+  def list(args) do
+    page =
+      Product
+      |> order_by(desc: :inserted_at)
+      |> preload(:categories)
+      |> preload(:product_images)
+      |> Repo.paginate(page: Map.get(args, :page, 1), page_size: Map.get(args, :page_size, 12))
+
+    %{
+      products: page.entries,
+      pagination: %{
+        page_number: page.page_number,
+        page_size: page.page_size,
+        total_pages: page.total_pages,
+        total_entries: page.total_entries
+      }
+    }
   end
 end

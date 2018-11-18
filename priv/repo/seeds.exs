@@ -77,7 +77,7 @@ Enum.each(1..15, fn _ ->
     name: name,
     slug: Utils.slugify(name),
     description: Faker.Lorem.paragraph(),
-    price: Faker.random_between(2000, 20000),
+    price: Faker.random_between(1000, 200_000),
     sku: sku,
     stock_qty: Faker.random_between(0, 20),
     user_id: admin_user.id
