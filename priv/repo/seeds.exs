@@ -72,12 +72,14 @@ Enum.each(1..15, fn _ ->
   name = Faker.Commerce.product_name()
   sku = Faker.Lorem.characters(3..5) |> to_string |> String.upcase()
   related_cat = Enum.at(categories, Faker.random_between(0, max_cat))
+  price = Faker.random_between(1000, 200_000)
 
   Bazaar.Product.changeset(%Bazaar.Product{}, %{
     name: name,
     slug: Utils.slugify(name),
     description: Faker.Lorem.paragraph(),
-    price: Faker.random_between(1000, 200_000),
+    price: price,
+    sale_price: Faker.Util.pick([nil, nil, nil, Faker.random_between(5000, price)]),
     sku: sku,
     stock_qty: Faker.random_between(0, 20),
     user_id: admin_user.id

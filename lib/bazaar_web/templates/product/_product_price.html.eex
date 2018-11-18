@@ -1,0 +1,9 @@
+<%= if @product.sale_price == nil do %>
+  <span>£<%= format_price(@product.price) %></span>
+<% else %>
+
+  <span>
+    <del>£<%= format_price(@product.price) %></del>
+    £<%= format_price(@product.sale_price) %>
+    </span>
+<% end %>

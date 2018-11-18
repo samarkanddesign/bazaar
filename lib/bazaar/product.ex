@@ -70,7 +70,7 @@ defmodule Bazaar.Product do
       |> order_by(desc: :inserted_at)
       |> preload(:categories)
       |> preload(:product_images)
-      |> Repo.paginate(page: Map.get(args, :page, 1), page_size: Map.get(args, :page_size, 12))
+      |> Repo.paginate(page: Map.get(args, "page", 1), page_size: Map.get(args, "page_size", 12))
 
     %{
       products: page.entries,
@@ -81,5 +81,11 @@ defmodule Bazaar.Product do
         total_entries: page.total_entries
       }
     }
+  end
+end
+
+defimpl Phoenix.Param, for: Bazaar.Product do
+  def to_param(%{slug: slug}) do
+    "#{slug}"
   end
 end

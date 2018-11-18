@@ -1,4 +1,6 @@
 <div>
+<a href="<%= product_path(@conn, :show, @product.slug) %>">
 <h3><%= @product.name %></h3>
-<span>£<%= format_price(@product.price) %></span>
+</a>
+<%= render "_product_price.html", product: @product %>
 </div>

@@ -1,0 +1,7 @@
+<div>
+<h1><%= @product.name %></h1>
+<div>
+<%= render "_product_price.html", product: @product %>
+<div>
+<div><%= @product.description %></div>
+</div>

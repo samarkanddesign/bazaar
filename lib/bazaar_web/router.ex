@@ -24,6 +24,7 @@ defmodule BazaarWeb.Router do
 
     get("/", PageController, :index)
     get("/shop", ProductController, :index)
+    get("/shop/:id", ProductController, :show)
   end
 
   scope "/api", BazaarWeb do
