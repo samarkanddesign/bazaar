@@ -17,10 +17,7 @@ defmodule BazaarWeb.ProductImageController do
   end
 
   def create(conn, params) do
-    IO.inspect(params)
-
     changeset = ProductImage.changeset(%ProductImage{}, params)
-    IO.inspect(changeset)
 
     case Repo.insert(changeset) do
       {:ok, _} ->

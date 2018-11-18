@@ -18,4 +18,9 @@ defmodule Bazaar.AbsintheHelpers do
   def first_error(res) do
     List.first(res["errors"])["message"]
   end
+
+  def first_validation(res, name) do
+    res["data"][name]["validation"]
+    |> List.first()
+  end
 end

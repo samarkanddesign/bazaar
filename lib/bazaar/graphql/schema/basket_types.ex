@@ -5,6 +5,11 @@ defmodule Bazaar.Schema.BasketTypes do
   alias Bazaar.GraphQl.Resolvers.BasketResolver
   alias Bazaar.GraphQl.Utils
 
+  object :update_basket_response do
+    field(:entity, :basket)
+    field(:validation, list_of(non_null(:validation)))
+  end
+
   object :basket do
     field(:id, non_null(:uuid))
     field(:items, non_null(list_of(non_null(:basket_item))), resolve: assoc(:basket_items))
@@ -40,12 +45,12 @@ defmodule Bazaar.Schema.BasketTypes do
     end
 
     @desc "Add a product to the basket using an existing basket identifier"
-    field :add_product_to_basket, type: :basket do
+    field :add_product_to_basket, type: :update_basket_response do
       arg(:basket_id, non_null(:uuid))
       arg(:product_id, non_null(:integer))
       arg(:quantity, non_null(:integer))
 
-      resolve(&BasketResolver.add_item_to_basket/3)
+      resolve(Utils.handle_errors(&BasketResolver.add_item_to_basket/3))
     end
 
     @desc "Remove a product from a basket"

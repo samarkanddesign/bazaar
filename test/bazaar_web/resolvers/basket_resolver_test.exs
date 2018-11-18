@@ -34,7 +34,7 @@ defmodule BazaarWeb.BasketResolverTest do
       mutation = add_to_basket_mutation(basket.id, product.id)
       res = make_mutation(context.conn, mutation)
 
-      assert res["data"]["addProductToBasket"]["items"] |> Enum.count() == 1
+      assert res["data"]["addProductToBasket"]["entity"]["items"] |> Enum.count() == 1
       assert basket |> Repo.preload(:basket_items) |> Map.get(:basket_items) |> Enum.count() == 1
     end
 
@@ -44,8 +44,8 @@ defmodule BazaarWeb.BasketResolverTest do
       mutation = add_to_basket_mutation(Ecto.UUID.generate(), product.id)
       res = make_mutation(context.conn, mutation)
 
-      error_message = List.first(res["errors"])["message"]
-      assert error_message == "basket does not exist"
+      validation_error = AbsintheHelpers.first_validation(res, "addProductToBasket")
+      assert validation_error["reason"] == "does not exist"
     end
 
     test "Adding a product to a basket that already contains a different product", context do
@@ -57,7 +57,7 @@ defmodule BazaarWeb.BasketResolverTest do
 
       res = make_mutation(context.conn, mutation)
 
-      assert res["data"]["addProductToBasket"]["items"] |> Enum.count() == 2
+      assert res["data"]["addProductToBasket"]["entity"]["items"] |> Enum.count() == 2
 
       assert Repo.get(Basket, basket_item.basket_id)
              |> Repo.preload(:basket_items)
@@ -71,8 +71,8 @@ defmodule BazaarWeb.BasketResolverTest do
 
       res = make_mutation(context.conn, mutation)
 
-      assert AbsintheHelpers.first_error(res)
-             |> String.contains?("Cannot add product to basket")
+      validation_error = AbsintheHelpers.first_validation(res, "addProductToBasket")
+      assert validation_error["reason"] == "is not available for purchase"
     end
 
     test "Adding more items to basket than are in stock", context do
@@ -83,8 +83,8 @@ defmodule BazaarWeb.BasketResolverTest do
 
       res = make_mutation(context.conn, mutation)
 
-      assert AbsintheHelpers.first_error(res) ==
-               "There is not enough stock to add this to the basket"
+      validation_error = AbsintheHelpers.first_validation(res, "addProductToBasket")
+      assert validation_error["reason"] == "is too high"
     end
 
     test "Removing a product from the basket that is in the basket", context do
@@ -102,9 +102,15 @@ defmodule BazaarWeb.BasketResolverTest do
     """
     mutation {
       addProductToBasket(basketId:"#{basket_id}", productId:#{product_id}, quantity:#{quantity}) {
-        id
-        items {
+        entity {
           id
+          items {
+            id
+          }
+        }
+        validation {
+          key
+          reason
         }
       }
     }
