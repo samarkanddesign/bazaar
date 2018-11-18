@@ -7,7 +7,7 @@ defmodule Bazaar.Repo.Migrations.CreateUsers do
       add(:email, :string, null: false)
       add(:password_hash, :string)
 
-      add(:role_id, references(:roles))
+      add(:role_id, references(:roles, on_delete: :delete_all))
       add(:billing_token, :string)
       timestamps()
     end

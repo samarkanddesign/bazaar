@@ -8,13 +8,19 @@ defmodule Bazaar.Repo.Migrations.CreateBasketItems do
     end
 
     create table(:basket_items) do
-      add(:basket_id, references(:baskets, type: :uuid))
-      add(:product_id, references(:products))
+      add(:basket_id, references(:baskets, type: :uuid), on_delete: :delete_all)
+      add(:product_id, references(:products), on_delete: :delete_all)
       add(:quantity, :integer, null: false)
       timestamps()
     end
 
-    create(unique_index(:basket_items, [:basket_id, :product_id]))
+    create(
+      unique_index(
+        :basket_items,
+        [:basket_id, :product_id],
+        name: :basket_items_basket_id_product_id_unique
+      )
+    )
   end
 
   def down do

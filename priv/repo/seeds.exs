@@ -73,15 +73,16 @@ Enum.each(1..15, fn _ ->
   sku = Faker.Lorem.characters(3..5) |> to_string |> String.upcase()
   related_cat = Enum.at(categories, Faker.random_between(0, max_cat))
 
-  Bazaar.Repo.insert!(%Bazaar.Product{
+  Bazaar.Product.changeset(%Bazaar.Product{}, %{
     name: name,
     slug: Utils.slugify(name),
     description: Faker.Lorem.paragraph(),
-    price: Faker.random_between(1, 200),
+    price: Faker.random_between(2000, 20000),
     sku: sku,
     stock_qty: Faker.random_between(0, 20),
     user_id: admin_user.id
   })
+  |> Bazaar.Repo.insert!()
   |> Repo.preload(:categories)
   |> Ecto.Changeset.change()
   |> Ecto.Changeset.put_assoc(:categories, [related_cat])

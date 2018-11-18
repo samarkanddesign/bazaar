@@ -15,6 +15,7 @@ defmodule Bazaar.Role do
   def changeset(role, attrs) do
     role
     |> cast(attrs, [:name, :slug, :description])
+    |> unique_constraint(:slug)
     |> validate_required([:name, :slug, :description])
   end
 end

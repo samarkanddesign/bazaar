@@ -14,6 +14,7 @@ defmodule Bazaar.BasketItem do
   @doc false
   def changeset(basket, attrs) do
     basket
+    |> unique_constraint(:product, name: :basket_items_basket_id_product_id_unique)
     |> cast(attrs, [:basket_id, :quantity, :product_id])
   end
 end
