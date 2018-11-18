@@ -3,5 +3,6 @@
 <div>
 <%= render "_product_price.html", product: @product %>
 <div>
+<img src="<%= thumbnail_url(@product, :show) %>" />
 <div><%= @product.description %></div>
 </div>

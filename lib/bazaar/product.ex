@@ -82,6 +82,20 @@ defmodule Bazaar.Product do
       }
     }
   end
+
+  def featured_image(product) do
+    product
+    |> product_images
+    |> Enum.at(0)
+  end
+
+  def product_images(product) do
+    case Ecto.assoc_loaded?(product.product_images) do
+      false -> Repo.preload(product, :product_images)
+      true -> product
+    end
+    |> Map.get(:product_images)
+  end
 end
 
 defimpl Phoenix.Param, for: Bazaar.Product do

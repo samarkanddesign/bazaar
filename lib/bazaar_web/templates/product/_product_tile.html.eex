@@ -3,4 +3,5 @@
 <h3><%= @product.name %></h3>
 </a>
 <%= render "_product_price.html", product: @product %>
+<img src="<%= thumbnail_url(@product, :thumb) %>" />
 </div>

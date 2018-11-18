@@ -16,6 +16,10 @@ defmodule Bazaar.Uploaders.ProductImage do
     show: "1300x900"
   }
 
+  def sizes() do
+    @heights
+  end
+
   def validate({file, _}) do
     ~w(.jpg .jpeg .gif .png) |> Enum.member?(Path.extname(file.file_name) |> String.downcase())
   end
